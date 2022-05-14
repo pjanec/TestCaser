@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "TestCaser": {
+      "commandName": "Project",
+      "commandLineArgs": "case Ahoj",
+      "workingDirectory": "D:\\Work\\TestCaser\\Data\\"
+    }
+  }
+}
