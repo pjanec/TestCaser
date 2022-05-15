@@ -15,14 +15,6 @@ namespace TestCaser
 
 		Context _ctx = Context.Instance;
 
-		public enum ExitCode
-		{
-			Success = 0,
-			Failure = 1,
-			Error = 2
-		}
-
-
 		public ExitCode Process( string[] cmd )
 		{
 			// cmd[0] = command name
@@ -168,7 +160,7 @@ namespace TestCaser
 				var grabbedPath = m.SaveImage( grabbedImage );
 				var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
 				var res = new Result();
-				res.Add( "SUCC", "findimg", imgId, grabbedRelPath, templRelPath );
+				res.Add( "OK", "findimg", imgId, grabbedRelPath, templRelPath );
 
 				return ExitCode.Success;
 			}
@@ -209,7 +201,7 @@ namespace TestCaser
 				var path = m.SaveImage( args );
 				var relPath = Functions.path_getrelative( path, Context.ResultFolder );
 				var res = new Result();
-				res.Add( "IMG", "saveimg", imgId, relPath );
+				res.Add( "OK", "saveimg", imgId, relPath );
 				return ExitCode.Success;
 			}
 			catch( Exception ex  )

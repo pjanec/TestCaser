@@ -8,12 +8,12 @@
 <td>
     <span>
     {{~ if $0.Details[1] }}
-     <a href="{{$0.Details[1]}}">grabbed</a>
+     <a href="{{$0.Details[1]}}">screenshot</a>
     {{~ end ~}} 
     </span>
     <span>
     {{~ if $0.Details[2] }}
-     <a href="{{$0.Details[2]}}">template</a>
+     <a href="{{$0.Details[2]}}">(template)</a>
     {{~ end ~}} 
     </span>
 </td>
@@ -21,7 +21,7 @@
 
 {{~func render_saveimg~}}
  <td>
-     <a href="{{$0.Details[1]}}">image</a>
+     <a href="{{$0.Details[1]}}" target="_blank">image</a>
  </td>
 {{~end~}}
 
@@ -70,7 +70,7 @@
             <th>Test Case</th>
             <th>Phase</th>
             <th>Operation</th>
-            <th>Arguments</th>
+            <th>Details</th>
             <th>Status</th>
         </tr>
         {{~for tc in TestCases~}}
@@ -92,7 +92,7 @@
             <td>{{r.Operation}}</td>
             {{render_rec_args r}}
             <td
-                {{-if r.Failed}} style="color:red"{{end}}>
+                {{-if r.Failed}} style="color:red"{{else}} style="color:green"{{end}}>
                 {{r.Status}}
             </td>
         </tr>            

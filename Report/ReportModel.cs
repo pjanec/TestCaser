@@ -42,7 +42,7 @@ namespace TestCaser.Models.Results
 			var m = new ResultsModel();
 
 			// check if there is any failure or error reported in the results
-			var resultFiles = Directory.GetFiles( Context.ResultFolder );
+			var resultFiles = Directory.GetFiles( Context.ResultFolder, "*.txt" );
 			foreach( var fname in resultFiles )
 			{
 				var tc = new TestCase() { Name = Path.GetFileNameWithoutExtension( fname ) };
@@ -51,16 +51,23 @@ namespace TestCaser.Models.Results
 				var lines = File.ReadAllLines( fname );
 				foreach( var line in lines )
 				{
-					Result.ParseLine( line, out var rl );
-					var chk = new Record()
+					try
 					{
-						Status = rl.Status,
-						Operation = rl.Operation,
-						Phase = rl.Phase,
-						Details = rl.Details
-					};
+						Result.ParseLine( line, out var rl );
 
-					tc.Records.Add( chk );
+						var chk = new Record()
+						{
+							Status = rl.Status,
+							Operation = rl.Operation,
+							Phase = rl.Phase,
+							Details = rl.Details
+						};
+
+						tc.Records.Add( chk );
+					}
+					catch
+					{
+					}
 				}
 			}
 			return m;
