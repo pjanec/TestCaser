@@ -17,7 +17,8 @@ namespace TestCaser
 		public static string WatchedFilesFolder = "WatchedFiles";
 		public static string RegExFolder = "RegEx";
 		public static string PatternImgFolder = "PatternImages";
-		public static string OutputImgFolder = "OutputImages";
+		public static string OutputImgFolder = ResultFolder+"\\Images";
+		public static string TemplatesFolder = Tools.GetExeDir()+"\\Templates";
 
 		public string Case
 		{

@@ -1,0 +1,94 @@
+{{~func render_default~}}
+<td>
+    {{$0.Details}}
+</td>
+{{~end~}}
+
+{{~func render_findimg~}}
+<td>
+     <a href="{{$0.Details[1]}}">image</a>
+</td>
+{{~end~}}
+
+{{~func render_saveimg~}}
+ <td>
+     <a href="{{$0.Details[1]}}">image</a>
+ </td>
+{{~end~}}
+
+{{~
+    func render_rec_args
+        if      $0.Operation=="findimg"; render_findimg $0
+        else if $0.Operation=="saveimg"; render_saveimg $0
+        else;                       render_default $0
+        end
+    end
+~}}
+
+<html>
+<style>
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+
+    th {
+        border: 1px solid #dddddd;
+        color: white;
+        background-color: #2655ff;
+        text-align: left;
+        padding: 8px;
+    }
+
+    td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f1f1f1;
+    }
+
+</style>
+<body>
+    <h1>Test Results</h1>
+    <table>
+        <tr>
+            <th>Test Case</th>
+            <th>Phase</th>
+            <th>Operation</th>
+            <th>Arguments</th>
+            <th>Status</th>
+        </tr>
+        {{~for tc in TestCases~}}
+        <tr>
+            <td>
+                <span>{{tc.Name}}<span>
+                {{~if tc.Failed}}
+                <span style="color:red"> [FAILED]</span>
+                {{~end~}}
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>            
+            {{~for r in tc.Records~}}
+        <tr>
+            <td></td>
+            <td>{{r.Phase}}</td>
+            <td>{{r.Operation}}</td>
+            {{render_rec_args r}}
+            <td
+                {{-if r.Failed}} style="color:red"{{end}}>
+                {{r.Status}}
+            </td>
+        </tr>            
+            {{~end~}}
+        {{~end~}}
+    </table>
+</body>
+</html>

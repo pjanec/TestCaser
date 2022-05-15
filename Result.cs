@@ -39,42 +39,40 @@ namespace TestCaser
 			File.AppendAllText( fname, line );
 		}
 
-		
-		static void ClearOutputImages()
-		{
-			var files = Directory.GetFiles( Context.OutputImgFolder );
-			foreach( var fname in files )
-			{
-				try { File.Delete( fname ); }
-				catch {}
-			}
-		}
-
-		static void ClearResultFiles()
-		{
-			var resultFiles = Directory.GetFiles( Context.ResultFolder );
-			foreach( var fname in resultFiles )
-			{
-				try { File.Delete( fname ); }
-				catch {}
-			}
-		}
-
 		public static void ClearAll()
 		{
-			ClearResultFiles();
-			ClearOutputImages();
+			// deletes the contents of the Results folder
+			if( Directory.Exists( Context.ResultFolder ) )
+			{
+				Tools.RecursiveDelete( new DirectoryInfo( Context.ResultFolder ), deleteJustContent:true );
+			}
 		}
 
-
-
-		static string GetStatus( string line )
+		public class ResultLine
 		{
+			public DateTime TimeStamp;
+			public string Status;
+			public string Phase;
+			public string Operation;
+			public string[] Details;
+		}
+
+		public static void ParseLine( string line, out ResultLine rl )
+		{
+			rl = new ResultLine();
+			rl.TimeStamp = DateTime.ParseExact(
+				line[1..24],
+				"yyyy-MM-dd HH:mm:ss.fff",
+                System.Globalization.CultureInfo.InvariantCulture);
+
 			var afterTimeStamp = line[26..];
 			var segm = afterTimeStamp.Split(':');
-			return segm[0];
+			var num = segm.Length;
+			rl.Status = num > 0 ? segm[0] : string.Empty;
+			rl.Phase  = num > 1 ? segm[1] : string.Empty;
+			rl.Operation   = num > 2 ? segm[2] : string.Empty;
+			rl.Details   = num > 3 ? segm[3..] : new string[0];
 		}
-
 
 		public static bool AllPassed()
 		{
@@ -85,8 +83,8 @@ namespace TestCaser
 				var lines = File.ReadAllLines( fname );
 				foreach( var line in lines )
 				{
-					var status = GetStatus( line );
-					if( status == "ERROR" || status == "FAIL" )
+					ParseLine( line, out var rl );
+					if( rl.Status == "ERROR" || rl.Status == "FAIL" )
 					{
 						return false;
 					}

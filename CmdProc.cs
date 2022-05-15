@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using NLog;
 
 namespace TestCaser
 {
 	public class CmdProc
 	{
+        static readonly Logger log = LogManager.GetCurrentClassLogger();
+
 		Context _ctx = Context.Instance;
 
 		public enum ExitCode
@@ -64,6 +67,11 @@ namespace TestCaser
 			if( cmdName == "passed" )
 			{
 				exitCode = HandlePassed( cmd );
+			}
+			else
+			if( cmdName == "report" )
+			{
+				exitCode = HandleReport( cmd );
 			}
 			return exitCode;
 		}
@@ -158,9 +166,9 @@ namespace TestCaser
 			try
 			{
 				var path = m.SaveImage( args );
-
+				var relPath = Functions.path_getrelative( path, Context.ResultFolder );
 				var res = new Result();
-				res.Add( "IMG", "saveimg", imgId, path );
+				res.Add( "IMG", "saveimg", imgId, relPath );
 				return ExitCode.Success;
 			}
 			catch( Exception ex  )
@@ -190,5 +198,30 @@ namespace TestCaser
 				return ExitCode.Success;
 			return ExitCode.Failure;
 		}
+
+		ExitCode HandleReport( string[] cmd )
+		{
+			if( cmd[1] == "results" )
+			{
+				try
+				{
+					var model = new Models.Results.ModelLoader().Load();
+					new TemplateProcessor(model).ProcessFile(
+						Context.TemplatesFolder+"\\Results.scriban",
+						Context.ResultFolder + "\\Results.html"
+					);
+					return ExitCode.Success;
+				}
+				catch( Exception ex )
+				{
+					log.Error(ex.Message);
+					Console.WriteLine(ex.Message);
+					return ExitCode.Failure;
+				}
+			}
+			log.Error($"Unknown report type: {cmd[1]}");
+			return ExitCode.Failure;
+		}
+
 	}
 }

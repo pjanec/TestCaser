@@ -1,2 +1,2 @@
-[2022-05-14 15:54:52.075]:FAIL:Phase1:regex:HelloDolly
-[2022-05-14 15:54:53.155]:IMG:Phase1:saveimg:img2.jpg:OutputImages\MyTestCase1-Phase1-img2.jpg
+[2022-05-15 12:37:00.470]:FAIL:Phase1:regex:HelloDolly
+[2022-05-15 12:37:01.393]:IMG:Phase1:saveimg:img2.jpg:Images\MyTestCase1-Phase1-img2.jpg

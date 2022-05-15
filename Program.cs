@@ -2,21 +2,26 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using NLog;
 
 namespace TestCaser
 {
 	class Program
 	{
+        static readonly Logger log = LogManager.GetCurrentClassLogger();
+
 		static int Main( string[] args )
 		{
 			Context.Instance = new Context();
 
+			if( args.Length > 0 && args[0] == "--tests" )
+			{
+				Test1();
+				return 0;
+			}
 
 			var exitCode = ProcessCmd( args );
 			return (int) exitCode;
-
-			//Test1();
-			return 0;
 		}
 
 		static CmdProc.ExitCode ProcessCmd( string[] cmd )
@@ -43,6 +48,7 @@ namespace TestCaser
 			//Test( new string[] {"saveimg", "img2", "{'Area':{'X':10,'Y':20,'Width':100,'Height':100}}" } );
 			Test( new string[] {"saveimg", "img2.jpg" } );
 			Test( new string[] {"passed" } ); // checks if all test cases passed
+			Test( new string[] {"report", "results" } ); // generates result report
 
 		}
 	}
