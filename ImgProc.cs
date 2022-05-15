@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 //using System.Windows.Forms;
 using Emgu.CV;
@@ -26,12 +27,19 @@ namespace TestCaser
 			public int Height;
 		}
 
+		public class WinTitle
+		{
+			public string RegExId; // locator of regex (file name containing the regex)
+			public bool IgnoreCase;
+		}
+
 		public class Args
 		{
 			public string Method;
 			public Area Area;
 			public double Precision = 0.8; // threashold for patter matching; the closer to 1.0 the more exact match, if negative the default around 0.8 will be used
 			public bool NoSave; // do not save image if not found (used by command processor)
+			public WinTitle WinTitle;
 		}
 
 
@@ -74,9 +82,7 @@ namespace TestCaser
 
 		public bool Search( Args args, out Bitmap grabbedImage )
 		{
-			Rectangle rect = args.Area != null
-				? new Rectangle( args.Area.X, args.Area.Y, args.Area.Width, args.Area.Height )
-				: ScreenGrab.GetAllScreensRect();
+			Rectangle rect = GetAreaRect( args );
 
 			var bitmap = ScreenGrab.GrabRect( rect );
 			_tmplFname = GetPatternImgFileName();
@@ -110,9 +116,34 @@ namespace TestCaser
 
 		Rectangle GetAreaRect( Args args )
 		{
-			return args.Area != null
-				? new Rectangle( args.Area.X, args.Area.Y, args.Area.Width, args.Area.Height )
-				: ScreenGrab.GetAllScreensRect();
+			if( args.Area != null )
+			{
+				return new Rectangle( args.Area.X, args.Area.Y, args.Area.Width, args.Area.Height );
+			}
+
+			if( args.WinTitle != null )
+			{
+				if (!string.IsNullOrEmpty( args.WinTitle.RegExId ))
+				{
+					var spec = RegexTools.GetSpec( args.WinTitle.RegExId );
+					var hWnd = WinTools.GetHandleByTitleRegEx( spec.Regex );
+					return GetAreaRectByHwnd( hWnd );
+				}
+			}
+
+			return ScreenGrab.GetAllScreensRect();
+		}
+
+		Rectangle GetAreaRectByHwnd( IntPtr hWnd )
+		{
+			if( hWnd == IntPtr.Zero )
+				throw new Exception($"No window found.");
+			if( !WinTools.GetWindowClientRectPhysical( hWnd, out var physicalRect ) ) 
+				throw new Exception($"Failed to get client area coordinates.");
+			if( physicalRect.Width == 0 || physicalRect.Height == 0 )
+				throw new Exception($"Window client area not visible.");
+
+			return physicalRect;
 		}
 
 		Bitmap GrabScreen( Args args )

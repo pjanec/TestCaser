@@ -6,22 +6,39 @@
 
 {{~func render_findimg~}}
 <td>
+    {{~ if $0.Details.size > 0 && !($0.Details[0] | string.empty) # imageId }}
     <span>
-    {{~ if $0.Details[1] }}
-     <a href="{{$0.Details[1]}}">screenshot</a>
-    {{~ end ~}} 
+      {{$0.Details[0]}}  
     </span>
+    {{~ end ~}} 
+    {{~ if $0.Details.size > 1 && !($0.Details[1] | string.empty) # screenshot taken }}
     <span>
-    {{~ if $0.Details[2] }}
-     <a href="{{$0.Details[2]}}">(template)</a>
-    {{~ end ~}} 
+      <a href="{{$0.Details[1]}}">screenshot</a>
     </span>
+    {{~ end ~}} 
+    {{~ if $0.Details.size > 2 && !($0.Details[2] | string.empty) # template image }}
+    <span>
+      <a href="{{$0.Details[2]}}">(template)</a>
+    </span>
+    {{~ end ~}} 
+    {{~ if $0.Details.size > 3 && !($0.Details[3] | string.empty) # error code}}
+    <span>
+      {{$0.Details[3]}}
+    </span>
+    {{~ end ~}} 
 </td>
 {{~end~}}
 
 {{~func render_saveimg~}}
  <td>
+     {{~ if $0.Details.size > 0 && !($0.Details[0] | string.empty) # imageId }}
+    <span>
+      {{$0.Details[0]}}  
+    </span>
+    {{~ end ~}} 
+    {{~ if $0.Details.size > 1 && !($0.Details[1] | string.empty) }}
      <a href="{{$0.Details[1]}}" target="_blank">image</a>
+    {{~ end ~}} 
  </td>
 {{~end~}}
 

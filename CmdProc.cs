@@ -37,9 +37,9 @@ namespace TestCaser
 				exitCode = HandleWatchf( cmd );
 			}
 			else
-			if( cmdName == "regex" )
+			if( cmdName == "regexf" )
 			{
-				exitCode = HandleRegex( cmd );
+				exitCode = HandleRegexf( cmd );
 			}
 			else
 			if( cmdName == "findimg" )
@@ -95,15 +95,15 @@ namespace TestCaser
 			return ExitCode.Success;
 		}
 
-		ExitCode HandleRegex( string[] cmd )
+		ExitCode HandleRegexf( string[] cmd )
 		{
 			var fileId = cmd[1];
 			var regexId = cmd[2];
 			var jsonArgs =  cmd.Length > 3 ? cmd[3] : string.Empty;
 
 			var args = string.IsNullOrEmpty( jsonArgs )
-				?  new RegEx.Args()
-				: Newtonsoft.Json.JsonConvert.DeserializeObject<RegEx.Args>( jsonArgs );
+				?  new FileRegEx.Args()
+				: Newtonsoft.Json.JsonConvert.DeserializeObject<FileRegEx.Args>( jsonArgs );
 
 			// get lines from the watched file
 			var wf = new Watchf( fileId );
@@ -113,20 +113,20 @@ namespace TestCaser
 			// apply regex
 			try
 			{
-				var re = new RegEx( regexId, args );
+				var re = new FileRegEx( regexId, args );
 				bool success = re.Search( lines );
 				if( !success )
 				{	
 					// log the result
 					var res = new Result();
-					res.Add( "FAIL", "regex", regexId );
+					res.Add( "FAIL", "regexf", regexId );
 					return ExitCode.Failure;
 				}
 			}
 			catch(Exception ex)
 			{
 				var res = new Result();
-				res.Add( "ERROR", "regex", regexId, ex.Message );
+				res.Add( "ERROR", "regexf", regexId, ex.Message );
 			}
 
 			return ExitCode.Success;
@@ -143,45 +143,55 @@ namespace TestCaser
 
 			// get lines from the watched file
 			var m = new ImgProc( imgId );
-			if (m.Search( args, out var grabbedImage ))
+			try
 			{
-				// highlight the area found
-				using(var graphics = Graphics.FromImage(grabbedImage))
+				if (m.Search( args, out var grabbedImage ))
 				{
-					var rect = m.FoundAt;
-					Pen redPen = new Pen(Color.Red, 3);
-					graphics.DrawRectangle(redPen, rect);
+					// highlight the area found
+					using (var graphics = Graphics.FromImage( grabbedImage ))
+					{
+						var rect = m.FoundAt;
+						Pen redPen = new Pen( Color.Red, 3 );
+						graphics.DrawRectangle( redPen, rect );
+					}
+
+					// save the grabbed image
+					var templPath = m.TemplateImageFile;
+					var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
+
+					var grabbedPath = m.SaveImage( grabbedImage );
+					var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
+					var res = new Result();
+					res.Add( "OK", "findimg", imgId, grabbedRelPath, templRelPath );
+
+					return ExitCode.Success;
 				}
 
-				// save the grabbed image
-				var templPath = m.TemplateImageFile;
-				var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
+				// save the image that was grabbed
+				if (!args.NoSave)
+				{
+					var templPath = m.TemplateImageFile;
+					var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
 
-				var grabbedPath = m.SaveImage( grabbedImage );
-				var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
-				var res = new Result();
-				res.Add( "OK", "findimg", imgId, grabbedRelPath, templRelPath );
-
-				return ExitCode.Success;
+					var grabbedPath = m.SaveImage( grabbedImage );
+					var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
+					var res = new Result();
+					res.Add( "FAIL", "findimg", imgId, grabbedRelPath, templRelPath );
+				}
+				else
+				{
+					var res = new Result();
+					res.Add( "FAIL", "findimg", imgId, "", "" );
+				}
+				return ExitCode.Failure;
 			}
-
-			// save the image that was grabbed
-			if( !args.NoSave )
-			{
-				var templPath = m.TemplateImageFile;
-				var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
-
-				var grabbedPath = m.SaveImage( grabbedImage );
-				var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
-				var res = new Result();
-				res.Add( "FAIL", "findimg", imgId, grabbedRelPath, templRelPath );
-			}
-			else
+			catch (Exception ex)
 			{
 				var res = new Result();
-				res.Add( "FAIL", "findimg", imgId );
+				res.Add( "FAIL", "findimg", imgId, "", "", ex.Message );
+				return ExitCode.Failure;
 			}
-			return ExitCode.Failure;
+
 		}
 
 
@@ -207,7 +217,7 @@ namespace TestCaser
 			catch( Exception ex  )
 			{
 				var res = new Result();
-				res.Add( "ERROR", "saveimg", imgId, ex.Message );
+				res.Add( "ERROR", "saveimg", imgId, "", ex.Message );
 				return ExitCode.Failure;
 			}
 		}

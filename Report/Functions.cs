@@ -17,7 +17,8 @@ namespace TestCaser
 
 		static void print( string s )
 		{
-			log.Info( s );
+			//log.Info( s );
+			Console.WriteLine(s);
 		}
 
 		static void log_error( string msg )

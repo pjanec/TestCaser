@@ -1,1 +1,1 @@
-BatchTest1
+MyTestCase1

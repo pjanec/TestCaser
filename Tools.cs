@@ -37,5 +37,6 @@ namespace TestCaser
 			if( assemblyExe.StartsWith( "file:///" ) ) assemblyExe = assemblyExe.Remove( 0, 8 );
 			return System.IO.Path.GetDirectoryName( assemblyExe );
 		}
+
 	}
 }

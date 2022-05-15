@@ -13,6 +13,7 @@ namespace TestCaser
 {
 	public static class ScreenGrab
 	{
+		// warning: rect must be in physical coordinates
 		public static Bitmap GrabRect( Rectangle rect )
 		{
 			Bitmap bitmap = new Bitmap( rect.Width, rect.Height, PixelFormat.Format32bppArgb);
@@ -35,6 +36,7 @@ namespace TestCaser
 			return GrabRect( rect );
 		}
 
+		// return physical coordinates
 		public static Rectangle GetAllScreensRect()
 		{
 			return PathInfo.GetActivePaths()

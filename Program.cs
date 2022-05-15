@@ -85,10 +85,10 @@ namespace TestCaser
 			Test( new string[] { "clear" } ); // clear all previous results
 			Test( new string[] { "case", "MyTestCase1" } );
 			Test( new string[] { "phase", "Phase1" } );
-			Test( new string[] { "watchf", "ig", @"{newest:'./*.log', recursive:true}" } );
-			Test( new string[] { "regex", "ig", "HelloDolly" } );
-			Test( new string[] { "regex", "ig", "HelloDolly" } );
-			Test( new string[] { "findimg", "pattern2.png" } );
+			Test( new string[] { "watchf", "ig", "{newest:'./*.log', recursive:true}" } );
+			Test( new string[] { "regexf", "ig", "HelloDolly", "{NotMatch:true}" } );
+			Test( new string[] { "regexf", "ig", "HelloDolly" } );
+			Test( new string[] { "findimg", "Screenshot_35.png", "{WinTitle:{RegExId:'Slovn'}}" } );
 			Test( new string[] {"saveimg", "img1", "{Area:{X:10,Y:20,Width:100,Height:100}}" } );
 			Test( new string[] { "saveimg", "img2.jpg" } );
 			Test( new string[] { "passed" } ); // checks if all test cases passed

@@ -8,7 +8,7 @@ using System.IO;
 
 namespace TestCaser
 {
-	public class RegEx
+	public class FileRegEx
 	{
 		Regex _re;
 		Args _args;
@@ -21,12 +21,11 @@ namespace TestCaser
 			public bool NotMatch;
 		}
 
-		public RegEx( string regexId, Args args )
+		public FileRegEx( string regexId, Args args )
 		{
 			_args = args;
-			var fname = $"{Context.RegExFolder}\\{regexId}";
-			var pattern = File.ReadAllText( fname );
-			_re = new Regex( pattern );
+			var spec = RegexTools.GetSpec( regexId );
+			_re = spec.Regex;
 		}
 
 		public bool Search( List<string> lines )
