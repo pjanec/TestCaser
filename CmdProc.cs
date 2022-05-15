@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using NLog;
+using System.Drawing;
 
 namespace TestCaser
 {
@@ -106,6 +107,11 @@ namespace TestCaser
 		{
 			var fileId = cmd[1];
 			var regexId = cmd[2];
+			var jsonArgs =  cmd.Length > 3 ? cmd[3] : string.Empty;
+
+			var args = string.IsNullOrEmpty( jsonArgs )
+				?  new RegEx.Args()
+				: Newtonsoft.Json.JsonConvert.DeserializeObject<RegEx.Args>( jsonArgs );
 
 			// get lines from the watched file
 			var wf = new Watchf( fileId );
@@ -115,7 +121,7 @@ namespace TestCaser
 			// apply regex
 			try
 			{
-				var re = new RegEx( regexId );
+				var re = new RegEx( regexId, args );
 				bool success = re.Search( lines );
 				if( !success )
 				{	
@@ -145,12 +151,47 @@ namespace TestCaser
 
 			// get lines from the watched file
 			var m = new ImgProc( imgId );
-			if (m.Search( args ))
+			if (m.Search( args, out var grabbedImage ))
 			{
+				// highlight the area found
+				using(var graphics = Graphics.FromImage(grabbedImage))
+				{
+					var rect = m.FoundAt;
+					Pen redPen = new Pen(Color.Red, 3);
+					graphics.DrawRectangle(redPen, rect);
+				}
+
+				// save the grabbed image
+				var templPath = m.TemplateImageFile;
+				var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
+
+				var grabbedPath = m.SaveImage( grabbedImage );
+				var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
+				var res = new Result();
+				res.Add( "SUCC", "findimg", imgId, grabbedRelPath, templRelPath );
+
 				return ExitCode.Success;
+			}
+
+			// save the image that was grabbed
+			if( !args.NoSave )
+			{
+				var templPath = m.TemplateImageFile;
+				var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );
+
+				var grabbedPath = m.SaveImage( grabbedImage );
+				var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
+				var res = new Result();
+				res.Add( "FAIL", "findimg", imgId, grabbedRelPath, templRelPath );
+			}
+			else
+			{
+				var res = new Result();
+				res.Add( "FAIL", "findimg", imgId );
 			}
 			return ExitCode.Failure;
 		}
+
 
 		ExitCode HandleSaveImg( string[] cmd )
 		{

@@ -31,6 +31,7 @@ namespace TestCaser
 			public string Method;
 			public Area Area;
 			public double Precision = 0.8; // threashold for patter matching; the closer to 1.0 the more exact match, if negative the default around 0.8 will be used
+			public bool NoSave; // do not save image if not found (used by command processor)
 		}
 
 
@@ -38,6 +39,17 @@ namespace TestCaser
 		/// base file name with extension (img1.png, myImage2.jpg etc.)
 		/// </summary>
 		string _imgId;
+
+		string _tmplFname;
+
+		Rectangle _foundAt;
+
+		/// <summary>
+		/// only after calling Search to get the path to the image searched
+		/// </summary>
+		public string TemplateImageFile => _tmplFname;
+
+		public Rectangle FoundAt => _foundAt;
 
 		/// <param name="imgId">base file name with extension (img1.png, myImage2.jpg etc.)</param>
 		public ImgProc( string imgId )
@@ -60,15 +72,16 @@ namespace TestCaser
 			return $"{Context.OutputImgFolder}\\{ctx.Case}-{ctx.Phase}-{_imgId}";
 		}
 
-		public bool Search( Args args )
+		public bool Search( Args args, out Bitmap grabbedImage )
 		{
 			Rectangle rect = args.Area != null
 				? new Rectangle( args.Area.X, args.Area.Y, args.Area.Width, args.Area.Height )
 				: ScreenGrab.GetAllScreensRect();
 
 			var bitmap = ScreenGrab.GrabRect( rect );
-			var tmplFname = GetPatternImgFileName();
-			return FindImage( bitmap, tmplFname, args.Precision, out var match );
+			_tmplFname = GetPatternImgFileName();
+			grabbedImage = bitmap;
+			return FindImage( bitmap, _tmplFname, args.Precision, out _foundAt );
 		}
 
 		bool FindImage( Bitmap bitmap, string templateImgFile, double threshold, out Rectangle match )

@@ -6,7 +6,16 @@
 
 {{~func render_findimg~}}
 <td>
-     <a href="{{$0.Details[1]}}">image</a>
+    <span>
+    {{~ if $0.Details[1] }}
+     <a href="{{$0.Details[1]}}">grabbed</a>
+    {{~ end ~}} 
+    </span>
+    <span>
+    {{~ if $0.Details[2] }}
+     <a href="{{$0.Details[2]}}">template</a>
+    {{~ end ~}} 
+    </span>
 </td>
 {{~end~}}
 
@@ -20,7 +29,7 @@
     func render_rec_args
         if      $0.Operation=="findimg"; render_findimg $0
         else if $0.Operation=="saveimg"; render_saveimg $0
-        else;                       render_default $0
+        else;                            render_default $0
         end
     end
 ~}}
