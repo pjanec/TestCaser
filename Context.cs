@@ -15,6 +15,7 @@ namespace TestCaser
 		public static string PhaseFileName = "phase.txt";
 		public static string ResultFolder = "Results";
 		public static string WatchedFilesFolder = "WatchedFiles";
+		public static string AreaFolder = "Areas";
 		public static string RegExFolder = "RegEx";
 		public static string PatternImgFolder = "PatternImages";
 		public static string OutputImgFolder = ResultFolder+"\\Images";

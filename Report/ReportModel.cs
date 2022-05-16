@@ -28,7 +28,7 @@ namespace TestCaser.Models.Results
 		public string Status = string.Empty;
 		public string Phase = string.Empty;
 		public string Operation = string.Empty;
-		public string[] Details = new string[0]; // type-specific
+		public BaseResult Details; // operation specific
 		public bool Failed => Status == "FAIL" || Status == "ERROR";
 	}
 
@@ -53,11 +53,11 @@ namespace TestCaser.Models.Results
 				{
 					try
 					{
-						Result.ParseLine( line, out var rl );
+						TestCaser.Results.ParseLine( line, out var rl );
 
 						var chk = new Record()
 						{
-							Status = rl.Status,
+							Status = rl.Status.ToString(),
 							Operation = rl.Operation,
 							Phase = rl.Phase,
 							Details = rl.Details

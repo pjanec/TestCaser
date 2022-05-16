@@ -7,7 +7,7 @@ using System.IO;
 
 namespace TestCaser
 {
-	public class Watchf
+	public class FileWatcher
 	{
 		Context _ctx = Context.Instance;
 		string _fileId;
@@ -15,7 +15,7 @@ namespace TestCaser
 		string _recFileName;
 		long _startOffset = 0;
 
-		public Watchf( string fileId, string fileLocator=null )
+		public FileWatcher( string fileId, string fileLocator=null )
 		{
 			_fileId = fileId;
 			_recFileName = GetWatchFileRecName(_fileId);

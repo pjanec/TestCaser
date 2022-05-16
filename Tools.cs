@@ -38,5 +38,11 @@ namespace TestCaser
 			return System.IO.Path.GetDirectoryName( assemblyExe );
 		}
 
+		public static bool IsJsonObj( string str )
+		{
+			if( string.IsNullOrEmpty( str ) ) return false;
+			return str.StartsWith('{') && str.EndsWith('}');
+		}
+
 	}
 }

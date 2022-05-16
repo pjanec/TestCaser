@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace TestCaser
 {
-	static class RegexTools
+	public static class RegexTools
 	{
 		public class Spec
 		{
@@ -41,6 +41,14 @@ namespace TestCaser
 				}
 			}
 		}
+
+		// match info usable for scriban script
+		public class Match
+		{
+			public string[] Groups;
+		}
+
+
 
 		public static Spec GetSpec( string regexId )
 		{

@@ -56,7 +56,7 @@ namespace TestCaser
 			//scriptObject["thisFile"] = System.IO.Path.GetFullPath( sourceFilePath );
 
 			// runs TestCaser command; use: tc ['regex', 'myRE1']
-			rootSO.Import("tc", new Func<IEnumerable<string>, int>((args) => (int)new CmdProc().Process( args.ToArray())));
+			rootSO.Import("tc", new Func<IEnumerable<string>, int>((args) => (int) Commands.Instance.Execute( args.ToArray())));
 
 			// template functions
 			{

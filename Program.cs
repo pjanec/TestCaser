@@ -66,8 +66,7 @@ namespace TestCaser
 				Directory.SetCurrentDirectory( dataFolder );
 			}
 
-			var cmdProc = new CmdProc();
-			var exitCode = cmdProc.Process( cmd );
+			var exitCode = Commands.Instance.Execute( cmd );
 
 			Directory.SetCurrentDirectory( origCwd );
 

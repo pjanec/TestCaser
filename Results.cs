@@ -6,37 +6,42 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Newtonsoft.Json;
 
 namespace TestCaser
 {
-	public class Result
+	public static class Results
 	{
-		Context ctx = Context.Instance;
+		static Context ctx = Context.Instance;
 
-		public Result()
-		{
-		}
-
-		public void Clear()
+		public static void Clear()
 		{
 			var fname = GetFileName();
 			try { File.Delete( fname ); }
 			catch {}
 		}
 
-		string GetFileName()
+		static string GetFileName()
 		{
 			var fname = $"{Context.ResultFolder}\\{ctx.Case}.txt";
 			return fname;
 		}
 
-		public void Add( string statusCode, string cmdCode, params string[] args )
+		public static void Add( string statusCode, string cmdCode, params string[] args )
 		{
 			Directory.CreateDirectory( Context.ResultFolder );
 			var timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
 			var line = $"[{timeStamp}]:{statusCode}:{ctx.Phase}:{cmdCode}:{String.Join(':', args)}\n";
 			var fname = GetFileName();
 			File.AppendAllText( fname, line );
+		}
+
+		public static void Add( BaseResult result )
+		{
+			Add( result.Status.ToString(), result.CmdCode, JsonConvert.SerializeObject( result, new JsonSerializerSettings
+				{
+					NullValueHandling = NullValueHandling.Ignore
+				} ) );
 		}
 
 		public static void ClearAll()
@@ -54,7 +59,7 @@ namespace TestCaser
 			public string Status;
 			public string Phase;
 			public string Operation;
-			public string[] Details;
+			public BaseResult Details; // json
 		}
 
 		public static void ParseLine( string line, out ResultLine rl )
@@ -66,12 +71,12 @@ namespace TestCaser
                 System.Globalization.CultureInfo.InvariantCulture);
 
 			var afterTimeStamp = line[26..];
-			var segm = afterTimeStamp.Split(':');
+			var segm = afterTimeStamp.Split(':', 4);
 			var num = segm.Length;
 			rl.Status = num > 0 ? segm[0] : string.Empty;
 			rl.Phase  = num > 1 ? segm[1] : string.Empty;
 			rl.Operation   = num > 2 ? segm[2] : string.Empty;
-			rl.Details   = num > 3 ? segm[3..] : new string[0];
+			if( num > 3 ) rl.Details = Commands.Instance.DeserializeResult( rl.Operation, segm[3] );
 		}
 
 		public static bool AllPassed()
