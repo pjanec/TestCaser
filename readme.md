@@ -57,5 +57,5 @@ Example of a command sequence in a control script file of an arbitrary testing t
 
 ### Test report
 
-![TestResultExample](../TFS/Bagira-Systems.wiki/.attachments/TestResultExample.png)
+![TestResultExample](TestResultExample.png)
 
