@@ -88,10 +88,10 @@ namespace TestCaser
 			Test( new string[] { "regexf", "ig", "HelloDolly", "{NotMatch:true}" } );
 			Test( new string[] { "regexf", "ig", "HelloDolly" } );
 			Test( new string[] { "findimg", "Screenshot_35.png", "{WinTitle:{RegExId:'Slovn'}}" } );
-			Test( new string[] {"saveimg", "img1", "{Area:{X:10,Y:20,Width:100,Height:100}}" } );
+			Test( new string[] { "saveimg", "img1", "{Area:{X:10,Y:20,Width:100,Height:100}}" } );
 			Test( new string[] { "saveimg", "img2.jpg" } );
 			Test( new string[] { "passed" } ); // checks if all test cases passed
-			Test( new string[] {"report", "results" } ); // generates result report
+			Test( new string[] { "report", "results" } ); // generates result report
 
 		}
 	}
