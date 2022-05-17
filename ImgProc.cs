@@ -104,8 +104,8 @@ namespace TestCaser
 		{
 			if( args.AreaSpec != null )
 			{
-				var areaSpec = AreaSpec.FromId( args.AreaSpec );
-				return areaSpec.GetAreaPhysicalRect();
+				var areaSpec = AreaSpec.From( args.AreaSpec );
+				return areaSpec.GetRect();
 			}
 
 			return AreaSpec.GetAllScreensRect();

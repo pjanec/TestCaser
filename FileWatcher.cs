@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace TestCaser
 {
@@ -21,7 +22,9 @@ namespace TestCaser
 		string _recFileName;
 		long _startOffset = 0;
 
-		public FileWatcher( string fileId, string fileLocator=null )
+		public string WatchedPath => _watchedFileName;
+
+		protected FileWatcher( string fileId, string fileLocator=null )
 		{
 			_fileId = fileId;
 			_recFileName = GetWatchFileRecName(_fileId);
@@ -31,6 +34,31 @@ namespace TestCaser
 			else
 				Load();
 		}
+
+		public static FileWatcher Create( string id = null, string fileLocator = null )
+		{
+			if( string.IsNullOrEmpty(id) && string.IsNullOrEmpty(fileLocator) )
+				throw new Exception("one of id and locator must not be null");
+			// if id null then we use the hash of the locator as the id
+			if( string.IsNullOrEmpty(id) )
+			{
+				id = Tools.ComputeMd5Hash(fileLocator);
+			}
+			return new FileWatcher( id, fileLocator );
+		}
+
+		public static FileWatcher Load( string id = null, string fileLocator = null )
+		{
+			if( string.IsNullOrEmpty(id) && string.IsNullOrEmpty(fileLocator) )
+				throw new Exception("one of id and locator must not be null");
+			// if id null then we use the hash of the locator as the id
+			if( string.IsNullOrEmpty(id) )
+			{
+				id = Tools.ComputeMd5Hash(fileLocator);
+			}
+			return new FileWatcher( id, null );
+		}
+
 
 		string GetWatchFileRecName( string fileId )
 		{
@@ -70,8 +98,8 @@ namespace TestCaser
 
 		string FileIdToFileName( string fileLocator )
 		{
-			var spec = FileSpec.FromId( fileLocator );
-			return spec.GetFilePath();
+			var spec = FileSpec.From( fileLocator );
+			return spec.GetPath();
 		}
 
 		// return the lines since last query

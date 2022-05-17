@@ -38,9 +38,10 @@ namespace TestCaser.Cmd
 
 		public override ExitCode Execute()
 		{
+			var fspec = FileSpec.From( FileId );
 
 			// get lines from the watched file
-			var wf = new FileWatcher( FileId );
+			var wf = FileWatcher.Load( fspec.Watcher, fspec.GetPath() );
 			var lines = wf.GetLines();
 			wf.Save(); // remember new offset
 

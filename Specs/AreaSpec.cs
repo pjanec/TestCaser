@@ -18,6 +18,7 @@ namespace TestCaser
 	/// </summary>
 	public class AreaSpec
 	{
+		public string Preset;
 		public JToken Rect;  // rectangle on the whole desktop (physical coords)
 		public ScreenArea Screen; // rectangle on given screen
 		public WindowArea Window; // rectangle in given window
@@ -26,8 +27,8 @@ namespace TestCaser
 		{
 			public JToken X;  // 12, "50%"
 			public JToken Y;
-			public JToken Width;
-			public JToken Height;  // 640
+			public JToken W;
+			public JToken H;  // 640
 		}
 
 		public class ScreenArea
@@ -38,7 +39,7 @@ namespace TestCaser
 
 		public class WindowArea
 		{
-			public JToken Id; // "windowLocatorName", {json object}
+			public JToken Preset; // "windowLocatorName", {json object}
 			public JToken Rect;
 		}
 
@@ -67,8 +68,8 @@ namespace TestCaser
 				{
 					X = AbsRel( myRect.X, reference.Width ),
 					Y = AbsRel( myRect.Y, reference.Height ),
-					Width = AbsRel( myRect.Width, reference.Width ),
-					Height = AbsRel( myRect.Height, reference.Height ),
+					Width = AbsRel( myRect.W, reference.Width ),
+					Height = AbsRel( myRect.H, reference.Height ),
 				};
 			}
 
@@ -104,8 +105,16 @@ namespace TestCaser
 		}
 
 		// returns physical coordinates
-		public Rectangle GetAreaPhysicalRect()
+		public Rectangle GetRect()
 		{
+			if( !string.IsNullOrEmpty(Preset) )
+			{
+				var fname = $"{Context.AreaSpecsFolder}\\{Preset}.json";
+				var jsonStr = File.ReadAllText( fname );
+				var spec = JsonConvert.DeserializeObject<AreaSpec>( jsonStr );
+				return spec.GetRect();
+			}
+
 			if( Rect != null )
 			{
 				var refRect = GetAllScreensRect();
@@ -114,7 +123,7 @@ namespace TestCaser
 
 			if( Window != null )
 			{
-				var winSpec = WindowSpec.FromId( Window.Id );
+				var winSpec = WindowSpec.From( Window.Preset );
 				var hWnd = winSpec.GetWindow();
 				var refRect = GetAreaRectByHwnd( hWnd );
 	
@@ -151,11 +160,11 @@ namespace TestCaser
 			return physicalRect;
 		}
 
-		public static AreaSpec FromId( JToken jtok )
+		public static AreaSpec From( JToken jtok )
 		{
 			if (jtok.Type == JTokenType.String)
 			{
-				return FromId( jtok.Value<string>() );
+				return new AreaSpec() { Preset = jtok.Value<string>() };
 			}
 			else
 			if (jtok.Type == JTokenType.Object)
@@ -170,24 +179,22 @@ namespace TestCaser
 			throw new Exception("Invalid file spec");
 		}
 
-		public static AreaSpec FromId( string id )
+		public static AreaSpec From( string txt )
 		{
-			if (string.IsNullOrEmpty( id )) throw new Exception( "Empty area locator" );
+			if (string.IsNullOrEmpty( txt )) throw new Exception( "Empty area spec" );
 
-			if (Tools.IsJsonArr( id ))
+			if (Tools.IsJsonArr( txt ))
 			{
-				var jtok = JToken.Parse(id);
-				return FromId( jtok );
+				var jtok = JToken.Parse(txt);
+				return From( jtok );
 			}
-			if (Tools.IsJsonObj( id ))
+			if (Tools.IsJsonObj( txt ))
 			{
-				return JsonConvert.DeserializeObject<AreaSpec>( id );
+				return JsonConvert.DeserializeObject<AreaSpec>( txt );
 			}
 			else
 			{
-				var fname = $"{Context.AreaSpecsFolder}\\{id}.json";
-				var jsonStr = File.ReadAllText( fname );
-				return JsonConvert.DeserializeObject<AreaSpec>( jsonStr );
+				return new AreaSpec() { Preset = txt };
 			}
 		}
 
@@ -214,33 +221,33 @@ namespace TestCaser
 		{
 			 //Debug.Assert( FromId("[1,2,3,4]").GetAreaPhysicalRect() == new Rectangle(1,2,3,4) );
 			 {
-				 var spec = FromId("[1,2,3,4]");
-				 var rect = spec.GetAreaPhysicalRect();
+				 var spec = From("[1,2,3,4]");
+				 var rect = spec.GetRect();
 			 }
 
 			 {
-				var spec = FromId("['50%','2','90%','4']");
-				var rect = spec.GetAreaPhysicalRect();
+				var spec = From("['50%','2','90%','4']");
+				var rect = spec.GetRect();
 			}
 
 			 {
-				 var spec = FromId("{Rect:[1,2,3,4]}");
-				 var rect = spec.GetAreaPhysicalRect();
+				 var spec = From("{Rect:[1,2,3,4]}");
+				 var rect = spec.GetRect();
 			 }
 
 			 {
-				 var spec = FromId("{Screen:{Id:1}}");
-				 var rect = spec.GetAreaPhysicalRect();
+				 var spec = From("{Screen:{Id:1}}");
+				 var rect = spec.GetRect();
 			 }
 
 			 {
-				 var spec = FromId("{Screen:{Id:1,Rect:[1,2,3,4]}}");
-				 var rect = spec.GetAreaPhysicalRect();
+				 var spec = From("{Screen:{Id:1,Rect:[1,2,3,4]}}");
+				 var rect = spec.GetRect();
 			 }
 
 			 {
-				 var spec = FromId("{Window:{Id:{ByTitle:{Regex:{Pattern:'aaa'}}}}}");
-				 var rect = spec.GetAreaPhysicalRect();
+				 var spec = From("{Window:{Id:{ByTitle:{Regex:{Pattern:'aaa'}}}}}");
+				 var rect = spec.GetRect();
 			 }
 
 		}

@@ -29,3 +29,55 @@
  - server stays loaded in memory
  - server can monitor something that does not like initialization every time a command is issued
     - like keeping RemoteDump connection to the tested apps etc.
+
+
+watchf <watchId> <fileSpec>
+
+watchSpec:
+  "preset"
+  {preset:'preset'}
+
+regex <fileSpec> <regexSpec> <options>
+   if fileSpec does not contain Watcher, an anonymous watcher is used
+
+fileSpec:
+  "path/to/file.txt" ... file path
+  {path:'path/to/file.txt'}
+  {preset:'name'}
+  {newest:{folder:'c:/myfolder',recursive:true}}
+  {watch:'watchId'} ... resolves to file path via a named FileWatcher
+
+  If no special watcher id assigned, hash from full file path will is used to identify the file context.
+
+regexSpec:
+  "pattern"        .... string considered regex pattern
+      contains
+      ^begins.*
+      ends.*$
+      ^exact$
+  {preset:'name'} .... settings loaded from RegexSpec\{id}.json
+  {pattern:'contains'}
+
+
+windowSpec:
+  {title:'pattern'}
+  {title:{preset:'name'}}
+  {title:{pattern:'name',ignoreCase:true}}
+  //{hwnd:9273823}
+  {preset:'name'}
+  "preset_id"  ... converted to {preset: 'preset_id'}
+
+areaSpecs:
+  "preset_id"   ... string considered preset id
+  [1,2,3,4]
+  ['10%',20,30,'40%']
+  {rect:[1,2,3,4]}
+  {rect:{X:1,Y:2,W:3,H:4]}
+  {window:'preset'}}
+  {window:{preset:'name',rect:[1,2,3,4]}}
+  {window:{title:'pattern'}
+  {window:{title:{preset:'name'}}}
+  {screen:{id:1}}
+  {screen:{id:1,rect:[1,2,3,4]}}
+
+

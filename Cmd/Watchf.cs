@@ -32,7 +32,7 @@ namespace TestCaser.Cmd
 		{
 
 			// get lines from the watched file
-			var wf = new FileWatcher( FileId, FileLocator );
+			var wf = FileWatcher.Create( FileId, FileLocator );
 			var lines = wf.GetLines();
 			wf.Save(); // remember new offset
 			return ExitCode.Success;

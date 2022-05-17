@@ -2,18 +2,27 @@
 using System.Text.RegularExpressions;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace TestCaser
 {
 	public class RegexSpec
 	{
+		public string Preset;
 		public string Pattern;
-		public string Contains;
 		public bool IgnoreCase;
 
 
 		public Regex GetRegex()
 		{
+			if( !string.IsNullOrEmpty(Preset) )
+			{
+				var fname = $"{Context.FileSpecsFolder}\\{Preset}.json";
+				var jsonStr = File.ReadAllText( fname );
+				var spec = JsonConvert.DeserializeObject<RegexSpec>( jsonStr );
+				return spec.GetRegex();
+			}
+
 			if (!string.IsNullOrEmpty( Pattern ))
 			{
 				var options = IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
@@ -21,24 +30,15 @@ namespace TestCaser
 				return re;
 			}
 
-			if (!string.IsNullOrEmpty( Contains ))
-			{
-				var pattern = ".*" + Regex.Escape(Contains) + ".*";
-				var options = IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
-				var re = new Regex( pattern, options );
-				return re;
-			}
-
-			throw new Exception($"No Pattern not Contains specified");
+			throw new Exception($"Invalid regex preset");
 		}
 
-		public static RegexSpec FromId( JToken jtok )
+		public static RegexSpec From( JToken jtok )
 		{
 			if (jtok.Type == JTokenType.String)
 			{
-				return FromId( jtok.Value<string>() );
+				return new RegexSpec() { Preset = jtok.Value<string>() };
 			}
-			else
 			if (jtok.Type == JTokenType.Object)
 			{
 				return (jtok as JObject).ToObject<RegexSpec>();
@@ -46,19 +46,17 @@ namespace TestCaser
 			throw new Exception("Invalid window spec");
 		}
 
-		public static RegexSpec FromId( string id )
+		public static RegexSpec FromId( string txt )
 		{
-			if( string.IsNullOrEmpty(id) ) throw new Exception("Empty regex locator");
+			if( string.IsNullOrEmpty(txt) ) throw new Exception("Empty regex locator");
 
-			if( Tools.IsJsonObj(id) )
+			if( Tools.IsJsonObj(txt) )
 			{
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<RegexSpec>( id );
+				return JsonConvert.DeserializeObject<RegexSpec>( txt );
 			}
 			else
 			{
-				var fname = $"{Context.RegExSpecsFolder}\\{id}.json";
-				var jsonStr = File.ReadAllText( fname );
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<RegexSpec>( jsonStr );
+				return new RegexSpec() { Preset = txt };
 			}
 		}
 	}

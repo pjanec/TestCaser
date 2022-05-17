@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 
@@ -11,31 +12,36 @@ namespace TestCaser
 	/// </summary>
 	public class WindowSpec
 	{
-		public ByTitleSpec ByTitle;
-
-		public class ByTitleSpec
-		{
-			public JToken Regex;
-		}
+		public string Preset; // preset id
+		public JToken Title; // regex
 
 		public IntPtr GetWindow()
 		{
-			if( ByTitle != null )
+			if( Preset != null )
 			{
-				var regexSpec = RegexSpec.FromId( ByTitle.Regex );
+				var fname = $"{Context.WindowSpecsFolder}\\{Preset}.json";
+				var jsonStr = File.ReadAllText( fname );
+				var spec = JsonConvert.DeserializeObject<WindowSpec>( jsonStr );
+				return spec.GetWindow();
+			}
+
+			if( Title != null )
+			{
+				var regexSpec = RegexSpec.From( Title );
 				var re = regexSpec.GetRegex();
 				var hWnd = WinTools.GetHandleByTitleRegEx( re );
 				return hWnd;
 			}
-			throw new Exception("Invalid window spec");
+
+			throw new Exception($"Invalid window spec {JsonConvert.SerializeObject(this)}");
 
 		}
 
-		public static WindowSpec FromId( JToken jtok )
+		public static WindowSpec From( JToken jtok )
 		{
 			if (jtok.Type == JTokenType.String)
 			{
-				return FromId( jtok.Value<string>() );
+				return new WindowSpec() { Preset=jtok.Value<string>() };
 			}
 			else
 			if (jtok.Type == JTokenType.Object)
@@ -45,19 +51,17 @@ namespace TestCaser
 			throw new Exception("Invalid window spec");
 		}
 
-		public static WindowSpec FromId( string id )
+		public static WindowSpec From( string txt )
 		{
-			if( string.IsNullOrEmpty(id) ) throw new Exception("Empty window locator");
+			if( string.IsNullOrEmpty(txt) ) throw new Exception("Empty window spec");
 
-			if( Tools.IsJsonObj(id) )
+			if( Tools.IsJsonObj(txt) )
 			{
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<WindowSpec>( id );
+				return JsonConvert.DeserializeObject<WindowSpec>( txt );
 			}
 			else
 			{
-				var fname = $"{Context.WindowSpecsFolder}\\{id}.json";
-				var jsonStr = File.ReadAllText( fname );
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<WindowSpec>( jsonStr );
+				return new WindowSpec() { Preset=txt };
 			}
 		}
 	}

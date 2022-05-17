@@ -50,5 +50,25 @@ namespace TestCaser
 			return str.StartsWith('[') && str.EndsWith(']');
 		}
 
+		public static bool IsJson( string str )
+		{
+			return IsJsonObj(str) || IsJsonArr(str);
+		}
+
+		public static string ComputeMd5Hash(string message)
+		{
+			using (var md5 = System.Security.Cryptography.MD5.Create())
+			{
+				byte[] input = Encoding.ASCII.GetBytes(message);
+				byte[] hash = md5.ComputeHash(input);
+	
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < hash.Length; i++)
+				{
+					sb.Append(hash[i].ToString("X2"));
+				}
+				return sb.ToString();
+			}
+		}
 	}
 }

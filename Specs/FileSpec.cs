@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 
@@ -12,7 +13,9 @@ namespace TestCaser
 	public class FileSpec
 	{
 		public string Path;	// file path (null if not used)
+		public string Preset; // preset id
 		public NewestFile Newest; // folder + mask (like "C:\*.txt")
+		public string Watcher; // file watcher instance name
 
 		public class NewestFile
 		{
@@ -20,52 +23,64 @@ namespace TestCaser
 			public bool Recursive;
 		}
 
-		public string GetFilePath()
+		public string GetPath()
 		{
 			if( !string.IsNullOrEmpty(Path) )
 			{
 				return Path;
 			}
+
+			if( !string.IsNullOrEmpty(Preset) )
+			{
+				var fname = $"{Context.FileSpecsFolder}\\{Preset}.json";
+				var jsonStr = File.ReadAllText( fname );
+				var spec = JsonConvert.DeserializeObject<FileSpec>( jsonStr );
+				return spec.GetPath();
+			}
+
 			if( Newest != null )
 			{
 				var files = FindMatchingFileInfos( Newest.Folder, Newest.Recursive );
 				var newestFileName = GetNewest( files );
 				return newestFileName;
 			}
+
+			if( !string.IsNullOrEmpty(Watcher) )
+			{
+				return FileWatcher.Load(Watcher).WatchedPath;
+			}
+
 			throw new Exception($"Invalid FileSpec");
 		}
 
 
-		public static FileSpec FromId( JToken jtok )
+		public static FileSpec From( JToken jtok )
 		{
 			if (jtok.Type == JTokenType.String)
 			{
-				return FromId( jtok.Value<string>() );
+				return From( jtok.Value<string>() );
 			}
 			else
 			if (jtok.Type == JTokenType.Object)
 			{
 				return (jtok as JObject).ToObject<FileSpec>();
 			}
-			throw new Exception("Invalid file spec");
+			throw new Exception($"Invalid file spec '{jtok}'");
 		}
 
-		public static FileSpec FromId( string id )
+		public static FileSpec From( string txt )
 		{
-			if( string.IsNullOrEmpty(id) ) throw new Exception("Empty file locator");
+			if( string.IsNullOrEmpty(txt) ) throw new Exception("Empty file spec");
 
-			if( Tools.IsJsonObj(id) )
+			if( Tools.IsJsonObj(txt) )
 			{
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<FileSpec>( id );
+				return JsonConvert.DeserializeObject<FileSpec>( txt );
 			}
-			else
+			else // consider a path
 			{
-				var fname = $"{Context.FileSpecsFolder}\\{id}.json";
-				var jsonStr = File.ReadAllText( fname );
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<FileSpec>( jsonStr );
+				return new FileSpec() { Path=txt };
 			}
-			throw new Exception($"Unrecognized fileId '{id}'");
-			
+			throw new Exception($"Invalid file spec '{txt}'");
 		}
 
 		static FileInfo[] FindMatchingFileInfos( string pathWithMask, bool recursive )
