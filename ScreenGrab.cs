@@ -36,7 +36,11 @@ namespace TestCaser
 			return GrabRect( rect );
 		}
 
-		// return physical coordinates
+		/// <summary>
+		/// Returns physical coordinates (usable for taking screenshot) of the bounding rectangle
+		/// of all available screens
+		/// </summary>
+		/// <returns></returns>
 		public static Rectangle GetAllScreensRect()
 		{
 			return PathInfo.GetActivePaths()

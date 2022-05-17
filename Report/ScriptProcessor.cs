@@ -10,6 +10,9 @@ using System.Collections.Generic;
 
 namespace TestCaser
 {
+	/// <summary>
+	/// Executes a Scriban script
+	/// </summary>
 	public class ScriptProcessor
 	{
         static readonly Logger log = LogManager.GetCurrentClassLogger();

@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 
 namespace TestCaser.Cmd
 {
+	/// <summary>
+	/// Produces a HTML report of given type.
+	/// "results" = test results
+	/// </summary>
 	public class Report : BaseCmd
 	{
         static readonly Logger log = LogManager.GetCurrentClassLogger();

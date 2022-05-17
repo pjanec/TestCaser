@@ -7,6 +7,10 @@ using Newtonsoft.Json;
 
 namespace TestCaser.Cmd
 {
+	/// <summary>
+	/// Clears all stored results.
+	/// The "Case" command needs to follow to define a name for storing the results of the checks that follow.
+	/// </summary>
 	public class Clear : BaseCmd
 	{
 		[JsonIgnore]		

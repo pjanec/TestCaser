@@ -7,6 +7,13 @@ using Newtonsoft.Json;
 
 namespace TestCaser
 {
+	/// <summary>
+	/// Repository of all available commands. (see ctor for registering new commands)
+	/// Can
+	///   - execute command from given command line
+	///   - create en empty command instance from given commandId string,
+	///   - deserialize the result of the command from json into a command-specific class
+	/// </summary>
 	public class Commands
 	{
 		static Commands _inst;

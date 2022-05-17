@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 namespace TestCaser.Cmd
 {
 
+	/// <summary>
+	/// Searches a file for given regular expression, either from beginning or
+	/// just the lines appended since the last query.
+	/// </summary>
 	public class Regexf : BaseCmd
 	{
 		[JsonIgnore]		
@@ -17,10 +21,11 @@ namespace TestCaser.Cmd
 		public string RegexId;
 		public bool NotMatch;
 
+		public override string Brief => $"{FileId} {RegexId}";
+
 		public class Result : BaseResult
 		{
 			public RegexTools.Match Match;
-			public Regexf Cmd;
 		}
 
 		public override void ParseCmd( string[] cmd )
@@ -52,13 +57,13 @@ namespace TestCaser.Cmd
 				if( !success )
 				{	
 					// log the result
-					Results.Add( new Result() { Cmd=this, CmdCode=Code, Status=EStatus.ERROR, Error = "No match" });
+					Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.ERROR, Error = "No match" });
 					return ExitCode.Failure;
 				}
 			}
 			catch(Exception ex)
 			{
-				Results.Add( new Result() { Cmd=this, CmdCode = Code, Status = EStatus.ERROR, Error = ex.Message } );
+				Results.Add( new Result() { Brief=Brief, CmdCode = Code, Status = EStatus.ERROR, Error = ex.Message } );
 
 				return ExitCode.Failure;
 			}

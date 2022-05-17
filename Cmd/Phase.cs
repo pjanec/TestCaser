@@ -7,6 +7,10 @@ using Newtonsoft.Json;
 
 namespace TestCaser.Cmd
 {
+	/// <summary>
+	/// Remebers what test case phase we are not performing
+	/// (shown in the report to help identify in what stage the test case was)
+	/// </summary>
 	public class Phase : BaseCmd
 	{
 		[JsonIgnore]

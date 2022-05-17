@@ -7,6 +7,12 @@ using System.IO;
 
 namespace TestCaser
 {
+	/// <summary>
+	/// Gets list of lines appended from last query.
+	/// File is identified using a symbolic Id. The actual file path
+	/// is resolved using a 'locator' which cound be either the file path
+	/// or a prescription of al algorithm how to find the path (for example newest file in some folder)
+	/// </summary>
 	public class FileWatcher
 	{
 		Context _ctx = Context.Instance;

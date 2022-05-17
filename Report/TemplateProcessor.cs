@@ -10,6 +10,10 @@ using System.Collections.Generic;
 
 namespace TestCaser
 {
+	/// <summary>
+	/// Renders an output file from a template and a data model.
+	/// Template is a Scriban file while the model is whatever C# object.
+	/// </summary>	
 	public class TemplateProcessor
 	{
         static readonly Logger log = LogManager.GetCurrentClassLogger();

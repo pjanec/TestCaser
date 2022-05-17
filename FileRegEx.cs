@@ -8,6 +8,9 @@ using System.IO;
 
 namespace TestCaser
 {
+	/// <summary>
+	/// Searches for regex in a list of lines.
+	/// </summary>
 	public class FileRegEx
 	{
 		Regex _re;

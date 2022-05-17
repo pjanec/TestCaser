@@ -27,18 +27,9 @@ namespace TestCaser
 			return fname;
 		}
 
-		public static void Add( string statusCode, string cmdCode, params string[] args )
-		{
-			Directory.CreateDirectory( Context.ResultFolder );
-			var timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-			var line = $"[{timeStamp}]:{statusCode}:{ctx.Phase}:{cmdCode}:{String.Join(':', args)}\n";
-			var fname = GetFileName();
-			File.AppendAllText( fname, line );
-		}
-
 		public static void Add( BaseResult result )
 		{
-			Add( result.Status.ToString(), result.CmdCode, JsonConvert.SerializeObject( result, new JsonSerializerSettings
+			AddLine( result.Status.ToString(), result.CmdCode, result.Brief, JsonConvert.SerializeObject( result, new JsonSerializerSettings
 				{
 					NullValueHandling = NullValueHandling.Ignore
 				} ) );
@@ -53,12 +44,22 @@ namespace TestCaser
 			}
 		}
 
+		public static void AddLine( string statusCode, string cmdCode, string brief, string jsonDetails )
+		{
+			Directory.CreateDirectory( Context.ResultFolder );
+			var timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+			var line = $"[{timeStamp}]:{statusCode}:{ctx.Phase}:{cmdCode}:{brief??""}:{jsonDetails??""}\n";
+			var fname = GetFileName();
+			File.AppendAllText( fname, line );
+		}
+
 		public class ResultLine
 		{
 			public DateTime TimeStamp;
 			public string Status;
 			public string Phase;
 			public string Operation;
+			public string Brief;
 			public BaseResult Details; // json
 		}
 
@@ -71,12 +72,13 @@ namespace TestCaser
                 System.Globalization.CultureInfo.InvariantCulture);
 
 			var afterTimeStamp = line[26..];
-			var segm = afterTimeStamp.Split(':', 4);
+			var segm = afterTimeStamp.Split(':', 5);
 			var num = segm.Length;
 			rl.Status = num > 0 ? segm[0] : string.Empty;
 			rl.Phase  = num > 1 ? segm[1] : string.Empty;
 			rl.Operation   = num > 2 ? segm[2] : string.Empty;
-			if( num > 3 ) rl.Details = Commands.Instance.DeserializeResult( rl.Operation, segm[3] );
+			rl.Brief   = num > 3 ? segm[3] : string.Empty;
+			if( num > 4 ) rl.Details = Commands.Instance.DeserializeResult( rl.Operation, segm[4] );
 		}
 
 		public static bool AllPassed()

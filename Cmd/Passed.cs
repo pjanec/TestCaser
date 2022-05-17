@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace TestCaser.Cmd
 {
+	/// <summary>
+	/// Checks if all tests executed so far passed.
+	/// </summary>
 	public class Passed : BaseCmd
 	{
 		[JsonIgnore]

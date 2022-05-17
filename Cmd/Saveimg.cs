@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 namespace TestCaser.Cmd
 {
 
+	/// <summary>
+	/// Makes a screenshot of given area and saves it as an image file
+	/// </summary>
 	public class Saveimg : BaseCmd
 	{
 		[JsonIgnore]		
@@ -16,6 +19,8 @@ namespace TestCaser.Cmd
 
 		public string ImgId;
 		public ImgProc.Args Args = new ImgProc.Args();
+
+		public override string Brief => ImgId;
 
 		public override void ParseCmd( string[] cmd )
 		{
@@ -26,7 +31,6 @@ namespace TestCaser.Cmd
 		public class Result : BaseResult
 		{
 			public string Path;
-			public Saveimg Cmd;
 		}
 
 		public override ExitCode Execute()
@@ -38,12 +42,12 @@ namespace TestCaser.Cmd
 				var path = m.SaveImage( Args );
 				var relPath = Functions.path_getrelative( path, Context.ResultFolder );
 
-				Results.Add( new Result() { Cmd=this, CmdCode=Code, Status=EStatus.OK, Path = relPath });
+				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.OK, Path = relPath });
 				return ExitCode.Success;
 			}
 			catch( Exception ex  )
 			{
-				Results.Add( new Result() { Cmd=this, CmdCode=Code, Status=EStatus.FAIL, Error = ex.Message });
+				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.FAIL, Error = ex.Message });
 				return ExitCode.Failure;
 			}
 		}

@@ -12,7 +12,7 @@
 <td>
    {{~ d = $0.Details; if d }}
     <span>
-      {{d.Cmd.ImgId}}  
+      {{d.CmdLine}}  
     </span>
     {{~ if !(d.ScreenshotPath | string.empty) }}
     <span>
@@ -35,7 +35,7 @@
  <td>
  {{~ d = $0.Details; if d }}
     <span>
-      {{d.Cmd.ImgId}}  
+      {{d.CmdLine}}  
     </span>
     {{~ if !(d.Path | string.empty) }}
     <span>
@@ -91,6 +91,7 @@
             <th>Test Case</th>
             <th>Phase</th>
             <th>Operation</th>
+            <th>Brief</th>
             <th>Details</th>
             <th>Status</th>
         </tr>
@@ -105,12 +106,14 @@
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
         </tr>            
             {{~for r in tc.Records~}}
         <tr>
             <td></td>
             <td>{{r.Phase}}</td>
             <td>{{r.Operation}}</td>
+            <td>{{r.Brief}}</td>
             {{render_rec_args r}}
             <td
                 {{-if r.Failed}} style="color:red"{{else}} style="color:green"{{end}}>

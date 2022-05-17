@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 namespace TestCaser.Cmd
 {
 
+	/// <summary>
+	/// Starts monitoring a file for appending new lines;
+	/// the fileId is then used in the regexf command to reference the file where to search for regexps.
+	/// </summary>
 	public class Watchf : BaseCmd
 	{
 		[JsonIgnore]		
@@ -21,6 +25,8 @@ namespace TestCaser.Cmd
 			FileId = cmd[1];
 			FileLocator = cmd[2];
 		}
+
+		public override string Brief => FileId;
 
 		public override ExitCode Execute()
 		{

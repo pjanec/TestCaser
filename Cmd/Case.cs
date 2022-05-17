@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace TestCaser.Cmd
 {
+	/// <summary>
+	/// Remebers what test case we are not performing (the results of later checks will be bound to this test case)
+	/// </summary>
 	public class Case : BaseCmd
 	{
 		[JsonIgnore]		
