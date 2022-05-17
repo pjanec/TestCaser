@@ -24,8 +24,8 @@ namespace TestCaser.Cmd
 		public override string Brief => $"{FileId} {RegexId}";
 
 		public class Result : BaseResult
-		{
-			public RegexTools.Match Match;
+		{					
+			public RegexMatch Match;
 		}
 
 		public override void ParseCmd( string[] cmd )

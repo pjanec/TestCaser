@@ -1,5 +1,0 @@
-{
-  "Pattern": "Hello\\sDolly.*",
-  //"Contains": "",
-  "IgnoreCase": true,
-}

@@ -27,8 +27,8 @@ namespace TestCaser
 		public FileRegEx( string regexId, Args args )
 		{
 			_args = args;
-			var spec = RegexTools.GetSpec( regexId );
-			_re = spec.Regex;
+			var spec = RegexSpec.FromId( regexId );
+			_re = spec.GetRegex();
 		}
 
 		public bool Search( List<string> lines )

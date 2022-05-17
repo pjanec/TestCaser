@@ -1,3 +1,7 @@
+# command for writing result
+ - if we determine ourselves if the test case step has passed/failed
+ - and we want to record it to the results for later report
+
 # Evaluating regex match
  - regexf saves the Match object (in scriban-accessible form) its results
     - string[] Groups

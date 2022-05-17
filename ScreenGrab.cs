@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-using WindowsDisplayAPI;
-using WindowsDisplayAPI.DisplayConfig;
-
 namespace TestCaser
 {
 	public static class ScreenGrab
@@ -32,20 +29,8 @@ namespace TestCaser
 
 		public static Bitmap GrabAllScreens()
 		{
-			var rect = GetAllScreensRect();
+			var rect = AreaSpec.GetAllScreensRect();
 			return GrabRect( rect );
-		}
-
-		/// <summary>
-		/// Returns physical coordinates (usable for taking screenshot) of the bounding rectangle
-		/// of all available screens
-		/// </summary>
-		/// <returns></returns>
-		public static Rectangle GetAllScreensRect()
-		{
-			return PathInfo.GetActivePaths()
-				.Select( pi => new Rectangle( pi.Position, pi.Resolution ) )
-				.Aggregate(Rectangle.Union);
 		}
 
 

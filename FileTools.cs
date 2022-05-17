@@ -16,7 +16,7 @@ namespace TestCaser
 
 		public static Spec GetSpec( string fileId )
 		{
-			var fname = $"{Context.AreaFolder}\\{fileId}.json";
+			var fname = $"{Context.AreaSpecsFolder}\\{fileId}.json";
 			var jsonStr = File.ReadAllText( fname );
 			return Newtonsoft.Json.JsonConvert.DeserializeObject<Spec>( jsonStr );
 		}

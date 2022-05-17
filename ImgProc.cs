@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser
 {
@@ -19,27 +20,12 @@ namespace TestCaser
 	{
 		Context ctx = Context.Instance;
 
-		public class Area
-		{
-			public int X;
-			public int Y;
-			public int Width;
-			public int Height;
-		}
-
-		public class WinTitle
-		{
-			public string RegExId; // locator of regex (file name containing the regex)
-			public bool IgnoreCase;
-		}
-
 		public class Args
 		{
 			public string Method;
-			public Area Area;
+			public JToken AreaSpec;
 			public double Precision = 0.8; // threashold for patter matching; the closer to 1.0 the more exact match, if negative the default around 0.8 will be used
 			public bool NoSave; // do not save image if not found (used by command processor)
-			public WinTitle WinTitle;
 		}
 
 
@@ -116,35 +102,15 @@ namespace TestCaser
 
 		Rectangle GetAreaRect( Args args )
 		{
-			if( args.Area != null )
+			if( args.AreaSpec != null )
 			{
-				return new Rectangle( args.Area.X, args.Area.Y, args.Area.Width, args.Area.Height );
+				var areaSpec = AreaSpec.FromId( args.AreaSpec );
+				return areaSpec.GetAreaPhysicalRect();
 			}
 
-			if( args.WinTitle != null )
-			{
-				if (!string.IsNullOrEmpty( args.WinTitle.RegExId ))
-				{
-					var spec = RegexTools.GetSpec( args.WinTitle.RegExId );
-					var hWnd = WinTools.GetHandleByTitleRegEx( spec.Regex );
-					return GetAreaRectByHwnd( hWnd );
-				}
-			}
-
-			return ScreenGrab.GetAllScreensRect();
+			return AreaSpec.GetAllScreensRect();
 		}
 
-		Rectangle GetAreaRectByHwnd( IntPtr hWnd )
-		{
-			if( hWnd == IntPtr.Zero )
-				throw new Exception($"No window found.");
-			if( !WinTools.GetWindowClientRectPhysical( hWnd, out var physicalRect ) ) 
-				throw new Exception($"Failed to get client area coordinates.");
-			if( physicalRect.Width == 0 || physicalRect.Height == 0 )
-				throw new Exception($"Window client area not visible.");
-
-			return physicalRect;
-		}
 
 		Bitmap GrabScreen( Args args )
 		{

@@ -44,5 +44,11 @@ namespace TestCaser
 			return str.StartsWith('{') && str.EndsWith('}');
 		}
 
+		public static bool IsJsonArr( string str )
+		{
+			if( string.IsNullOrEmpty( str ) ) return false;
+			return str.StartsWith('[') && str.EndsWith(']');
+		}
+
 	}
 }

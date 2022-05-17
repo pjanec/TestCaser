@@ -13,7 +13,7 @@ namespace TestCaser
 	/// is resolved using a 'locator' which cound be either the file path
 	/// or a prescription of al algorithm how to find the path (for example newest file in some folder)
 	/// </summary>
-	public class FileWatcher
+	public partial class FileWatcher
 	{
 		Context _ctx = Context.Instance;
 		string _fileId;
@@ -68,64 +68,10 @@ namespace TestCaser
 			File.WriteAllLines( _recFileName, lines );;
 		}
 
-		class JsonLocator
-		{
-			public string Newest; // folder + mask (like "C:\*.txt")
-			public bool Recursive;
-		}
-		
 		string FileIdToFileName( string fileLocator )
 		{
-			if( string.IsNullOrEmpty(fileLocator) ) throw new Exception("File locator is empty");
-			fileLocator = fileLocator.Trim();
-
-			// json?
-			if( fileLocator.StartsWith('{') && fileLocator.EndsWith('}') )
-			{
-				return EvalJsonLocator( fileLocator );
-			}
-			else // assume fileLocator = file name
-			{
-				return fileLocator;
-			}
-		}
-
-		string EvalJsonLocator( string jsonLoc )
-		{
-			var args = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonLocator>( jsonLoc );
-
-			if( !string.IsNullOrEmpty(args.Newest) )
-			{
-				var files = FindMatchingFileInfos( args.Newest, args.Recursive );
-				var newestFileName = GetNewest( files );
-				return newestFileName;
-			}
-
-			throw new Exception($"Unrecognized file locator '{jsonLoc}'");
-		}
-
-		FileInfo[] FindMatchingFileInfos( string pathWithMask, bool recursive )
-		{
-			var dir = Path.GetDirectoryName( pathWithMask );
-			var mask = Path.GetFileName( pathWithMask );
-			if( string.IsNullOrEmpty(mask) ) mask = "*.*"; //throw new Exception($"No file mask given in '{pathWithMask}'");
-			if( string.IsNullOrEmpty( dir ) ) dir = Directory.GetCurrentDirectory();
-			var dirInfo = new DirectoryInfo(dir);
-			var enumOpts = new EnumerationOptions()
-			{
-				MatchType = MatchType.Win32,
-				RecurseSubdirectories = recursive,
-				ReturnSpecialDirectories = false
-			};
-			FileInfo[] files = dirInfo.GetFiles( mask, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-			return files;
-		}
-
-		string GetNewest( FileInfo[] files )
-		{
-			if( files.Length == 0 ) return null;
-			Array.Sort( files, (x, y) => x.LastWriteTimeUtc.CompareTo( y.LastWriteTimeUtc ) );
-			return files[files.Length-1].FullName;
+			var spec = FileSpec.FromId( fileLocator );
+			return spec.GetFilePath();
 		}
 
 		// return the lines since last query

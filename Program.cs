@@ -5,6 +5,7 @@ using System.Linq;
 using NLog;
 using CommandLine;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser
 {
@@ -81,15 +82,18 @@ namespace TestCaser
 
 		static void Test1()
 		{
+			//AreaSpec.Test();
+
 			Test( new string[] { "clear" } ); // clear all previous results
 			Test( new string[] { "case", "MyTestCase1" } );
 			Test( new string[] { "phase", "Phase1" } );
-			Test( new string[] { "watchf", "ig", "{newest:'./*.log', recursive:true}" } );
+			Test( new string[] { "watchf", "ig", "{newest:{folder:'./*.log', recursive:true}}" } );
 			Test( new string[] { "regexf", "ig", "HelloDolly", "{NotMatch:true}" } );
 			Test( new string[] { "regexf", "ig", "HelloDolly" } );
 			Test( new string[] { "findimg", "Screenshot_35.png", "{WinTitle:{RegExId:'Slovn'}}" } );
 			Test( new string[] { "saveimg", "img1", "{Area:{X:10,Y:20,Width:100,Height:100}}" } );
 			Test( new string[] { "saveimg", "img2.jpg" } );
+			Test( new string[] { "result", "myBrief", "FAIL", "Somethinf failed."  } ); // checks if all test cases passed
 			Test( new string[] { "passed" } ); // checks if all test cases passed
 			Test( new string[] { "report", "results" } ); // generates result report
 
