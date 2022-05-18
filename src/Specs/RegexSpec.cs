@@ -17,9 +17,7 @@ namespace TestCaser
 		{
 			if( !string.IsNullOrEmpty(Preset) )
 			{
-				var fname = $"{Context.FileSpecsFolder}\\{Preset}.json";
-				var jsonStr = File.ReadAllText( fname );
-				var spec = JsonConvert.DeserializeObject<RegexSpec>( jsonStr );
+				var spec = FileTools.GetSpec<RegexSpec>( Preset, Context.RegExSpecsFolder );
 				return spec.GetRegex();
 			}
 
@@ -37,7 +35,7 @@ namespace TestCaser
 		{
 			if (jtok.Type == JTokenType.String)
 			{
-				return new RegexSpec() { Preset = jtok.Value<string>() };
+				return new RegexSpec() { Pattern = jtok.Value<string>() };
 			}
 			if (jtok.Type == JTokenType.Object)
 			{
@@ -46,7 +44,7 @@ namespace TestCaser
 			throw new Exception("Invalid window spec");
 		}
 
-		public static RegexSpec FromId( string txt )
+		public static RegexSpec From( string txt )
 		{
 			if( string.IsNullOrEmpty(txt) ) throw new Exception("Empty regex locator");
 
@@ -56,7 +54,7 @@ namespace TestCaser
 			}
 			else
 			{
-				return new RegexSpec() { Preset = txt };
+				return new RegexSpec() { Pattern = txt };
 			}
 		}
 	}

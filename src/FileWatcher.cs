@@ -14,62 +14,76 @@ namespace TestCaser
 	/// is resolved using a 'locator' which cound be either the file path
 	/// or a prescription of al algorithm how to find the path (for example newest file in some folder)
 	/// </summary>
-	public partial class FileWatcher
+	public class FileWatcher
 	{
-		Context _ctx = Context.Instance;
-		string _fileId;
+		string _id;	// watcher id
 		string _watchedFileName;
-		string _recFileName;
+		string _recFileName; // file where we save the file name and offset
 		long _startOffset = 0;
 
 		public string WatchedPath => _watchedFileName;
 
-		protected FileWatcher( string fileId, string fileLocator=null )
+		public enum Mode
 		{
-			_fileId = fileId;
-			_recFileName = GetWatchFileRecName(_fileId);
+			Load,
+			Create,
+			LoadOrCreate
+		}
 
-			if( fileLocator!=null )
-				Create(fileLocator);
+		public FileWatcher( string id, string path, Mode mode )
+		{
+			// if id null then we use the hash of the locator as the id
+			if( string.IsNullOrEmpty(id) )
+			{
+				id = Tools.ComputeMd5Hash( path );
+			}
+
+			_id = id;
+
+			_recFileName = GetWatchFileRecName(_id);
+
+			if( mode == Mode.LoadOrCreate )
+			{
+				if( File.Exists( _recFileName ) )
+					Load();
+				else
+					Create( path );
+			}
+			else
+			if( mode == Mode.Create )
+				Create( path );
 			else
 				Load();
 		}
 
-		public static FileWatcher Create( string id = null, string fileLocator = null )
+		static string GetWatchFileRecName( string fileId )
 		{
-			if( string.IsNullOrEmpty(id) && string.IsNullOrEmpty(fileLocator) )
-				throw new Exception("one of id and locator must not be null");
-			// if id null then we use the hash of the locator as the id
-			if( string.IsNullOrEmpty(id) )
+			return $"{Context.WatchedFilesFolder}\\{Context.Instance.Case}-{fileId}.txt";
+		}
+
+		public void MoveToEnd()
+		{
+			using( var fs = File.Open( _watchedFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite) )
 			{
-				id = Tools.ComputeMd5Hash(fileLocator);
+				fs.Seek(0, SeekOrigin.End);
+				_startOffset = fs.Position;
 			}
-			return new FileWatcher( id, fileLocator );
 		}
 
-		public static FileWatcher Load( string id = null, string fileLocator = null )
-		{
-			if( string.IsNullOrEmpty(id) && string.IsNullOrEmpty(fileLocator) )
-				throw new Exception("one of id and locator must not be null");
-			// if id null then we use the hash of the locator as the id
-			if( string.IsNullOrEmpty(id) )
-			{
-				id = Tools.ComputeMd5Hash(fileLocator);
-			}
-			return new FileWatcher( id, null );
-		}
-
-
-		string GetWatchFileRecName( string fileId )
-		{
-			return $"{Context.WatchedFilesFolder}\\{_ctx.Case}-{fileId}.txt";
-		}
-
-		void Create(string fileLocator )
+		void Create( string path )
 		{
 			Directory.CreateDirectory( Context.WatchedFilesFolder );
-			_watchedFileName = FileIdToFileName( fileLocator );
-			if( string.IsNullOrEmpty(_watchedFileName) ) throw new Exception($"No file matching the locator '{fileLocator}'");
+			_watchedFileName = path;
+			if( string.IsNullOrEmpty(_watchedFileName) ) throw new Exception($"No file'");
+
+			//// remember current length so we do not start reading some 
+			//using( var fs = File.Open( _watchedFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite) )
+			//{
+			//	fs.Seek(0, SeekOrigin.End );
+			//	_startOffset = fs.Position;
+			//}
+			//Save();
+
 		}
 
 		void Load()
@@ -88,18 +102,12 @@ namespace TestCaser
 		{
 			var lines = new List<string>()
 			{
-				FileIdToFileName( _watchedFileName ),
+				_watchedFileName,
 				_startOffset.ToString() // start offset
 			};
 
 			// create a watched file record
 			File.WriteAllLines( _recFileName, lines );;
-		}
-
-		string FileIdToFileName( string fileLocator )
-		{
-			var spec = FileSpec.From( fileLocator );
-			return spec.GetPath();
 		}
 
 		// return the lines since last query

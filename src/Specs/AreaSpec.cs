@@ -19,9 +19,9 @@ namespace TestCaser
 	public class AreaSpec
 	{
 		public string Preset;
-		public JToken Rect;  // rectangle on the whole desktop (physical coords)
+		public JToken Rect;  // rectangle on the screen or window or desktop
 		public ScreenArea Screen; // rectangle on given screen
-		public WindowArea Window; // rectangle in given window
+		public JToken Window; // windowSpec
 
 		public class MyRectangle
 		{
@@ -34,13 +34,6 @@ namespace TestCaser
 		public class ScreenArea
 		{
 			public int Id; // 0=whole desktop
-			public JToken Rect;
-		}
-
-		public class WindowArea
-		{
-			public JToken Preset; // "windowLocatorName", {json object}
-			public JToken Rect;
 		}
 
 
@@ -109,28 +102,20 @@ namespace TestCaser
 		{
 			if( !string.IsNullOrEmpty(Preset) )
 			{
-				var fname = $"{Context.AreaSpecsFolder}\\{Preset}.json";
-				var jsonStr = File.ReadAllText( fname );
-				var spec = JsonConvert.DeserializeObject<AreaSpec>( jsonStr );
+				var spec = FileTools.GetSpec<AreaSpec>( Preset, Context.AreaSpecsFolder );
 				return spec.GetRect();
-			}
-
-			if( Rect != null )
-			{
-				var refRect = GetAllScreensRect();
-				return ResolveAbsRel( Rect, refRect );
 			}
 
 			if( Window != null )
 			{
-				var winSpec = WindowSpec.From( Window.Preset );
+				var winSpec = WindowSpec.From( Window );
 				var hWnd = winSpec.GetWindow();
 				var refRect = GetAreaRectByHwnd( hWnd );
 	
-				if( Window.Rect == null )
+				if( Rect == null )
 					return refRect;
 				else
-					return ResolveAbsRel( Window.Rect, refRect );
+					return ResolveAbsRel( Rect, refRect );
 			}
 
 			if( Screen != null )
@@ -139,10 +124,17 @@ namespace TestCaser
 				if( refRect.Size.Width == 0 || refRect.Size.Width == 0 )
 					throw new Exception("Invalid screen number");
 
-				if( Screen.Rect == null )
+				if( Rect == null )
 					return refRect;
 				else
-					return ResolveAbsRel( Screen.Rect, refRect );
+					return ResolveAbsRel( Rect, refRect );
+			}
+
+			// rect on the whole desktop
+			if( Rect != null )
+			{
+				var refRect = GetAllScreensRect();
+				return ResolveAbsRel( Rect, refRect );
 			}
 
 			throw new Exception("Invalid area spec");

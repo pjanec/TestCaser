@@ -36,7 +36,7 @@ namespace TestCaser
 			Register<Cmd.Watchf, BaseResult>();
 			Register<Cmd.Findimg, Cmd.Findimg.Result>();
 			Register<Cmd.Regexf, Cmd.Regexf.Result>();
-			Register<Cmd.Saveimg, Cmd.Saveimg.Result>();
+			Register<Cmd.Screenshot, Cmd.Screenshot.Result>();
 			Register<Cmd.Result, Cmd.Result._Result>();
 		}
 

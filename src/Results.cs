@@ -7,6 +7,7 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser
 {
@@ -29,10 +30,7 @@ namespace TestCaser
 
 		public static void Add( BaseResult result )
 		{
-			AddLine( result.Status.ToString(), result.CmdCode, result.Brief, JsonConvert.SerializeObject( result, new JsonSerializerSettings
-				{
-					NullValueHandling = NullValueHandling.Ignore
-				} ) );
+			AddLine( result.Status.ToString(), result.CmdCode, result.Brief, result );
 		}
 
 		public static void ClearAll()
@@ -44,15 +42,6 @@ namespace TestCaser
 			}
 		}
 
-		public static void AddLine( string statusCode, string cmdCode, string brief, string jsonDetails )
-		{
-			Directory.CreateDirectory( Context.ResultFolder );
-			var timeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-			var line = $"[{timeStamp}]:{statusCode}:{ctx.Phase}:{cmdCode}:{brief??""}:{jsonDetails??""}\n";
-			var fname = GetFileName();
-			File.AppendAllText( fname, line );
-		}
-
 		public class ResultLine
 		{
 			public DateTime TimeStamp;
@@ -60,25 +49,32 @@ namespace TestCaser
 			public string Phase;
 			public string Operation;
 			public string Brief;
-			public BaseResult Details; // json
+			public JToken Details; // json
+		}
+
+		public static void AddLine( string statusCode, string cmdCode, string brief, BaseResult details )
+		{
+			Directory.CreateDirectory( Context.ResultFolder );
+
+			var rl = new ResultLine()
+			{
+				TimeStamp = DateTime.Now,
+				Status = statusCode,
+				Phase = ctx.Phase,
+				Operation = cmdCode,
+				Brief = brief,
+				Details = JToken.FromObject( details )
+			};
+
+			var line = JsonConvert.SerializeObject(rl, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore })+"\n";
+				
+			var fname = GetFileName();
+			File.AppendAllText( fname, line );
 		}
 
 		public static void ParseLine( string line, out ResultLine rl )
 		{
-			rl = new ResultLine();
-			rl.TimeStamp = DateTime.ParseExact(
-				line[1..24],
-				"yyyy-MM-dd HH:mm:ss.fff",
-                System.Globalization.CultureInfo.InvariantCulture);
-
-			var afterTimeStamp = line[26..];
-			var segm = afterTimeStamp.Split(':', 5);
-			var num = segm.Length;
-			rl.Status = num > 0 ? segm[0] : string.Empty;
-			rl.Phase  = num > 1 ? segm[1] : string.Empty;
-			rl.Operation   = num > 2 ? segm[2] : string.Empty;
-			rl.Brief   = num > 3 ? segm[3] : string.Empty;
-			if( num > 4 ) rl.Details = Commands.Instance.DeserializeResult( rl.Operation, segm[4] );
+			rl = JsonConvert.DeserializeObject<ResultLine>( line );
 		}
 
 		public static bool AllPassed()

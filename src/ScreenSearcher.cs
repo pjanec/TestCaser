@@ -16,21 +16,21 @@ using Newtonsoft.Json.Linq;
 
 namespace TestCaser
 {
-	public class ImgProc
+	public class ScreenSearcher
 	{
 		Context ctx = Context.Instance;
 
 		public class Args
 		{
 			public string Method;
-			public JToken AreaSpec;
+			public JToken Area;
 			public double Precision = 0.8; // threashold for patter matching; the closer to 1.0 the more exact match, if negative the default around 0.8 will be used
 			public bool NoSave; // do not save image if not found (used by command processor)
 		}
 
 
 		/// <summary>
-		/// base file name with extension (img1.png, myImage2.jpg etc.)
+		/// id to add to the image path and to the report to identify it
 		/// </summary>
 		string _imgId;
 
@@ -46,15 +46,15 @@ namespace TestCaser
 		public Rectangle FoundAt => _foundAt;
 
 		/// <param name="imgId">base file name with extension (img1.png, myImage2.jpg etc.)</param>
-		public ImgProc( string imgId )
+		public ScreenSearcher( string imgTemplFilePath, string id=null )
 		{
-			_imgId = imgId;
-			//_imgFileName = GetPatternImgFileName( imgId );
-		}
+			if( string.IsNullOrEmpty(id) )
+			{
+				id = Guid.NewGuid().ToString();
+			}
 
-		string GetPatternImgFileName()
-		{
-			return $"{Context.PatternImgFolder}\\{_imgId}";
+			_imgId = id;
+			_tmplFname = imgTemplFilePath;
 		}
 
 		string GetOutputImgFileName()
@@ -70,8 +70,7 @@ namespace TestCaser
 		{
 			Rectangle rect = GetAreaRect( args );
 
-			var bitmap = ScreenGrab.GrabRect( rect );
-			_tmplFname = GetPatternImgFileName();
+			var bitmap = GrabScreenRect( rect );
 			grabbedImage = bitmap;
 			return FindImage( bitmap, _tmplFname, args.Precision, out _foundAt );
 		}
@@ -100,11 +99,11 @@ namespace TestCaser
 			return false;
 		}
 
-		Rectangle GetAreaRect( Args args )
+		static Rectangle GetAreaRect( Args args )
 		{
-			if( args.AreaSpec != null )
+			if( args.Area != null )
 			{
-				var areaSpec = AreaSpec.From( args.AreaSpec );
+				var areaSpec = AreaSpec.From( args.Area );
 				return areaSpec.GetRect();
 			}
 
@@ -112,10 +111,20 @@ namespace TestCaser
 		}
 
 
-		Bitmap GrabScreen( Args args )
+		static Bitmap GrabScreen( Args args )
 		{
 			var rect = GetAreaRect( args );
-			return ScreenGrab.GrabRect( rect );
+			return GrabScreenRect( rect );
+		}
+
+		static Bitmap GrabScreenRect( Rectangle rect )
+		{
+			Bitmap bitmap = new Bitmap( rect.Width, rect.Height, PixelFormat.Format32bppArgb);
+
+			Graphics captureGraphics = Graphics.FromImage(bitmap);
+			captureGraphics.CopyFromScreen( rect.Left, rect.Top, 0,0, rect.Size );
+
+			return bitmap;
 		}
 
 		public string SaveImage( Args args )

@@ -20,12 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Report\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Templates\**" CopyToOutputDirectory="PreserveNewest" LinkBase="Templates\" />
   </ItemGroup>
+
   
 
 </Project>

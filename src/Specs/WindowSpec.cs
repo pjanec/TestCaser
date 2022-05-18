@@ -14,14 +14,13 @@ namespace TestCaser
 	{
 		public string Preset; // preset id
 		public JToken Title; // regex
+		public JToken Hwnd;
 
 		public IntPtr GetWindow()
 		{
 			if( Preset != null )
 			{
-				var fname = $"{Context.WindowSpecsFolder}\\{Preset}.json";
-				var jsonStr = File.ReadAllText( fname );
-				var spec = JsonConvert.DeserializeObject<WindowSpec>( jsonStr );
+				var spec = FileTools.GetSpec<WindowSpec>( Preset, Context.WindowSpecsFolder );
 				return spec.GetWindow();
 			}
 
@@ -33,7 +32,22 @@ namespace TestCaser
 				return hWnd;
 			}
 
-			throw new Exception($"Invalid window spec {JsonConvert.SerializeObject(this)}");
+			if( Hwnd != null )
+			{
+				if( Hwnd.Type == JTokenType.Integer )
+				{
+					return new IntPtr( Hwnd.ToObject<int>() );
+				}
+
+				if( Hwnd.Type == JTokenType.String )
+				{
+					var value = (long)ulong.Parse( Hwnd.ToObject<string>(), System.Globalization.NumberStyles.HexNumber);
+					return new IntPtr( value );
+				}
+				throw new Exception($"Invalid hwnd {Hwnd}");
+			}
+
+			throw new Exception($"Invalid window spec {JsonConvert.SerializeObject(this, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore })}");
 
 		}
 
@@ -43,11 +57,12 @@ namespace TestCaser
 			{
 				return new WindowSpec() { Preset=jtok.Value<string>() };
 			}
-			else
+
 			if (jtok.Type == JTokenType.Object)
 			{
 				return (jtok as JObject).ToObject<WindowSpec>();
 			}
+
 			throw new Exception("Invalid window spec");
 		}
 

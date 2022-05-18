@@ -8,6 +8,7 @@ using NLog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace TestCaser.Models.Results
 {
@@ -70,7 +71,7 @@ namespace TestCaser.Models.Results
 							Operation = rl.Operation,
 							Phase = rl.Phase,
 							Brief = rl.Brief,
-							Details = rl.Details
+							Details = Commands.Instance.DeserializeResult( rl.Operation, rl.Details.ToString() )
 						};
 
 						tc.Records.Add( chk );

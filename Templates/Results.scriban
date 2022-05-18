@@ -31,7 +31,7 @@
 </td>
 {{~end~}}
 
-{{~func render_saveimg~}}
+{{~func render_screenshot~}}
  <td>
  {{~ d = $0.Details; if d }}
     <span>
@@ -49,7 +49,7 @@
 {{~
     func render_rec_args
         if      $0.Operation=="findimg"; render_findimg $0
-        else if $0.Operation=="saveimg"; render_saveimg $0
+        else if $0.Operation=="screenshot"; render_screenshot $0
         else;                            render_default $0
         end
     end

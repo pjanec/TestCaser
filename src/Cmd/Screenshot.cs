@@ -12,20 +12,20 @@ namespace TestCaser.Cmd
 	/// <summary>
 	/// Makes a screenshot of given area and saves it as an image file
 	/// </summary>
-	public class Saveimg : BaseCmd
+	public class Screenshot : BaseCmd
 	{
 		[JsonIgnore]		
-		public override string Code => "saveimg";
+		public override string Code => "screenshot";
 
 		public string ImgId;
-		public ImgProc.Args Args = new ImgProc.Args();
+		public ScreenSearcher.Args Args = new ScreenSearcher.Args();
 
 		public override string Brief => ImgId;
 
 		public override void ParseCmd( string[] cmd )
 		{
 			ImgId = cmd[1];
-			if( cmd.Length > 2 && Tools.IsJsonObj( cmd[2] ) ) Args = JsonConvert.DeserializeObject<ImgProc.Args>( cmd[2] );
+			if( cmd.Length > 2 && Tools.IsJsonObj( cmd[2] ) ) Args = JsonConvert.DeserializeObject<ScreenSearcher.Args>( cmd[2] );
 		}
 
 		public class Result : BaseResult
@@ -36,7 +36,7 @@ namespace TestCaser.Cmd
 		public override ExitCode Execute()
 		{
 			// get lines from the watched file
-			var m = new ImgProc( ImgId );
+			var m = new ScreenSearcher( null, ImgId );
 			try
 			{
 				var path = m.SaveImage( Args );

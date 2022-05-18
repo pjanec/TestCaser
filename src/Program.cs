@@ -87,13 +87,13 @@ namespace TestCaser
 			Test( new string[] { "clear" } ); // clear all previous results
 			Test( new string[] { "case", "MyTestCase1" } );
 			Test( new string[] { "phase", "Phase1" } );
-			Test( new string[] { "watchf", "ig", "{newest:{folder:'./*.log', recursive:true}}" } );
-			Test( new string[] { "regexf", "ig", "HelloDolly", "{NotMatch:true}" } );
-			Test( new string[] { "regexf", "ig", "HelloDolly" } );
-			Test( new string[] { "findimg", "Screenshot_35.png", "{WinTitle:{RegExId:'Slovn'}}" } );
-			Test( new string[] { "saveimg", "img1", "{Area:{X:10,Y:20,Width:100,Height:100}}" } );
-			Test( new string[] { "saveimg", "img2.jpg" } );
-			Test( new string[] { "result", "myBrief", "FAIL", "Somethinf failed."  } ); // checks if all test cases passed
+			Test( new string[] { "watchf", "{newest:{path:'./*.log', recursive:true}}", "{id:'ig'}" });
+			Test( new string[] { "regexf", "{watch:'ig'}", "Dolly.*" } );
+			Test( new string[] { "regexf", "IgLog.txt", "{preset:'HelloDolly'}", "{NotMatch:true}" } );
+			Test( new string[] { "findimg", "Images/Screenshot_35.png", "{area:{Window:{Title:'Slovn'}}}" } );
+			Test( new string[] { "screenshot", "img1", "{Area:[10,20,'30%','40%']}" } );
+			Test( new string[] { "screenshot", "img2.jpg" } );
+			Test( new string[] { "result", "myBrief", "FAIL", "Something failed."  } ); // checks if all test cases passed
 			Test( new string[] { "passed" } ); // checks if all test cases passed
 			Test( new string[] { "report", "results" } ); // generates result report
 

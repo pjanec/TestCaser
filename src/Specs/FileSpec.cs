@@ -15,11 +15,11 @@ namespace TestCaser
 		public string Path;	// file path (null if not used)
 		public string Preset; // preset id
 		public NewestFile Newest; // folder + mask (like "C:\*.txt")
-		public string Watcher; // file watcher instance name
+		public string Watch; // file watcher instance name
 
 		public class NewestFile
 		{
-			public string Folder; // folder + mask (like "C:\*.txt")
+			public string Path; // folder + mask (like "C:\*.txt")
 			public bool Recursive;
 		}
 
@@ -32,22 +32,21 @@ namespace TestCaser
 
 			if( !string.IsNullOrEmpty(Preset) )
 			{
-				var fname = $"{Context.FileSpecsFolder}\\{Preset}.json";
-				var jsonStr = File.ReadAllText( fname );
-				var spec = JsonConvert.DeserializeObject<FileSpec>( jsonStr );
+				var spec = FileTools.GetSpec<FileSpec>( Preset, Context.FileSpecsFolder );
 				return spec.GetPath();
 			}
 
 			if( Newest != null )
 			{
-				var files = FindMatchingFileInfos( Newest.Folder, Newest.Recursive );
+				var files = FindMatchingFileInfos( Newest.Path, Newest.Recursive );
 				var newestFileName = GetNewest( files );
 				return newestFileName;
 			}
 
-			if( !string.IsNullOrEmpty(Watcher) )
+			if( !string.IsNullOrEmpty(Watch) )
 			{
-				return FileWatcher.Load(Watcher).WatchedPath;
+				// the watcher must exist, otherwise an exception os thrown
+				return new FileWatcher(Watch, null, FileWatcher.Mode.Load).WatchedPath;
 			}
 
 			throw new Exception($"Invalid FileSpec");

@@ -17,11 +17,12 @@ namespace TestCaser.Cmd
 		[JsonIgnore]		
 		public override string Code => "regexf";
 
-		public string FileId;
-		public string RegexId;
+		public string FileSpec;
+		public string RegexSpec;
 		public bool NotMatch;
+		public bool FromBeginning;
 
-		public override string Brief => $"{FileId} {RegexId}";
+		public override string Brief => $"{FileSpec} {RegexSpec}";
 
 		public class Result : BaseResult
 		{					
@@ -30,30 +31,31 @@ namespace TestCaser.Cmd
 
 		public override void ParseCmd( string[] cmd )
 		{
-			FileId = cmd[1];
-			RegexId = cmd[2];
+			FileSpec = cmd[1];
+			RegexSpec = cmd[2];
 			if( cmd.Length > 3 && Tools.IsJsonObj( cmd[3] ) ) JsonConvert.PopulateObject( cmd[3], this );
 		}
 
 
 		public override ExitCode Execute()
 		{
-			var fspec = FileSpec.From( FileId );
+			var fspec = TestCaser.FileSpec.From( FileSpec );
 
 			// get lines from the watched file
-			var wf = FileWatcher.Load( fspec.Watcher, fspec.GetPath() );
+			var wf = new FileWatcher( fspec.Watch, fspec.GetPath(), FileWatcher.Mode.LoadOrCreate );
 			var lines = wf.GetLines();
 			wf.Save(); // remember new offset
 
 			// apply regex
 			try
 			{
-				var args = new FileRegEx.Args()
+				var args = new FileRegexSearcher.Args()
 				{
 					NotMatch = NotMatch
 				};
 				
-				var re = new FileRegEx( RegexId, args );
+				var regexSpec = TestCaser.RegexSpec.From(RegexSpec );
+				var re = new FileRegexSearcher( regexSpec.GetRegex(), args );
 				bool success = re.Search( lines );
 				if( !success )
 				{	

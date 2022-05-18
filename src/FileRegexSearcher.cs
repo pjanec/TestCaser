@@ -11,7 +11,7 @@ namespace TestCaser
 	/// <summary>
 	/// Searches for regex in a list of lines.
 	/// </summary>
-	public class FileRegEx
+	public class FileRegexSearcher
 	{
 		Regex _re;
 		Args _args;
@@ -24,11 +24,10 @@ namespace TestCaser
 			public bool NotMatch;
 		}
 
-		public FileRegEx( string regexId, Args args )
+		public FileRegexSearcher( Regex re, Args args )
 		{
 			_args = args;
-			var spec = RegexSpec.FromId( regexId );
-			_re = spec.GetRegex();
+			_re = re;
 		}
 
 		public bool Search( List<string> lines )
