@@ -1,17 +1,17 @@
 # Test Caser
 
-A tool for evaluation of a success/failure of an individual test steps performed as part of automatic UI testing.
+A tool evaluating a success/failure of individual test steps performed as part of automatic UI testing.
 
 
 This tool is able to:
 
-* Check log files for presence of a regular expression
+* Check log files for presence of regular expressions
 * Check if the screen contains an image
-* Generate a HTML test report with the results
+* Generate HTML test report with results
 
 It does NOT perform:
 
-* Simulating user input/actions - this is left for the control script to do
+* Simulating user input/actions - this is left to another control script/tool to do
 
 
 
@@ -19,13 +19,13 @@ It does NOT perform:
 
 The tool is command-line based so it can be started from whatever other testing application or script.
 
-The control script calls this tool every time when it is needed to check the expected outcome of a recently executed test step.
+The control script shell call this tool every time when it needs to check the expected outcome of recently executed test step.
 
-This tool returns error code specifying whether the the step has passed or failed base on defined criteria.
+This tool returns error code specifying whether the the step has passed or failed base on criteria defined on the command line.
 
 
 
-Example of a command sequence in a control script file of an arbitrary testing tool
+Example of a command sequence in a control script file or an arbitrary testing tool
 
 ('tc' stands for invocation of our test tool)
 
@@ -63,12 +63,17 @@ tc report results
 
 
 
-# Common arguments
+# Specifiers
+Many commands need arguments specifying various elements like file names, windows, screen area coordinates or regular expressions.
 
+There are various ways available how to specify those elements. For example a file can be can be specified directly by its path in the file system, or found based by a file mask. Similarly a window can be specified via its window handle or base on its title. Screen area can be defined as absolute screen coordinates, or coordinates relative to concrete display, or withim given window etc.
 
+An element can be specified either directly (like a file can be specified by its path in the file system) or indirectly via preset names.
 
-### <*fileSpec*>
+The followinf section list the most common specifiers:
 
+## <*fileSpec*>
+Examples of diferent ways how to specify a file:
 ```javascript
 "path/to/file.txt" // file path
 {path:'path/to/file.txt'}
@@ -86,7 +91,7 @@ tc report results
 
 
 
-### <*regexSpec*>
+## <*regexSpec*>
 
 ```javascript
   "pattern"        // string considered regex pattern
@@ -106,7 +111,7 @@ tc report results
 
 
 
-### <*winSpec*>
+## <*winSpec*>
 
 ```javascript
 "preset1"
@@ -127,7 +132,7 @@ tc report results
 
 
 
-### <*areaSpec*>
+## <*areaSpec*>
 
 ```javascript
 "preset1"   // windows defined by WindowPresets\preset1.json
@@ -158,13 +163,24 @@ tc report results
 
 
 
+# Presets
+Presets are small JSON files containing detailed specification of the element (file paths, regex patterns, window title, area coordinates...)
+
+Presets allow for moving the details (like exact coordinates or exact file names) outside of the test script into separately managed preset folders.
+
+Using well named presets instead of direct specifications can make test scripts more readable and maintainable as well as more reusable.
+
+For example when the application window has different size or location in the next release, it might be enough to adjust the coordinates in the preset files, leaving the test script untouched.
+
+Or the same test script coupled with different presets might be used for testning the same application in different enviroments.
+
 
 
 # Commands
 
 
 
-### watchf <*fileSpec*> <*options*>
+## watchf <*fileSpec*> <*options*>
 
 Remembers the position in a text file where to start looking for regular expressions
 
@@ -196,7 +212,7 @@ watchf "{newest:{path:'C:/myLogs/*.log', recursive:true}}" "{id:'log1'}"
 
 
 
-### regexf <*fileSpec*> <*regexSpec*> <*options*>
+## regexf <*fileSpec*> <*regexSpec*> <*options*>
 
 Searches a file for given regular expression, either from beginning or just the lines appended since the last query.
 
@@ -220,7 +236,7 @@ Searches a file for given regular expression, either from beginning or just the 
 
 OK if regex lookup was successful, FAIL otherwise
 
-##### Remarks
+**Remarks**
 
 If *fileSpec* does not contain `watcher`, an anonymous watcher is used
 
@@ -239,7 +255,7 @@ regexf "IgLog.txt" "{preset:'myRegEx1'}" "{NotMatch:true}"
 
 
 
-### findimg <*fileSpec*> <*options*>
+## findimg <*fileSpec*> <*options*>
 
 Searches the screen for given image (that was captured from the screen some time before)
 
@@ -275,7 +291,7 @@ findimg "Images/myButton1.png" "{area:{window:{title:'Slovn'}}}"
 
 
 
-### screenshot <*id*> <*options*>
+## screenshot <*id*> <*options*>
 
 Takes a screenshot and saves it to given file. Area can be specified, by default whole desktop is taken.
 
@@ -302,7 +318,7 @@ screenshot img1 "{Area:[10,20,'30%','40%']}"
 
 
 
-### result <*infoStr*> <*status*> <*errMsg*>
+## result <*infoStr*> <*status*> <*errMsg*>
 
 Add a custom result record the the report. Useful if the pass/fail status is determines outside of this tool but we want it logged as part of our report.
 
