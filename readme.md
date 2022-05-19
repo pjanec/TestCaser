@@ -70,9 +70,12 @@ There are various ways available how to specify those elements. For example a fi
 
 An element can be specified either directly (like a file can be specified by its path in the file system) or indirectly via preset names.
 
-The followinf section list the most common specifiers:
+The following section list the most common specifiers:
 
 ## <*fileSpec*>
+
+Specifies a file path.
+
 Examples of diferent ways how to specify a file:
 ```javascript
 "path/to/file.txt" // file path
@@ -93,13 +96,15 @@ Examples of diferent ways how to specify a file:
 
 ## <*regexSpec*>
 
+Specifies a regular expression.
+
 ```javascript
   "pattern"        // string considered regex pattern
       contains
       ^begins.*
       ends.*$
       ^exact$
-  {preset:'preset1'} // settings loaded from RegexSpec\{id}.json
+  {preset:'id'} // settings loaded from RegexSpec\{id}.json
   {pattern:'^hello.*',ignoreCase:true}
 ```
 
@@ -112,6 +117,8 @@ Examples of diferent ways how to specify a file:
 
 
 ## <*winSpec*>
+
+Specifies a window on the desktop.
 
 ```javascript
 "preset1"
@@ -133,6 +140,8 @@ Examples of diferent ways how to specify a file:
 
 
 ## <*areaSpec*>
+
+Specifies a rectangular area on the screen, in physical coordinates.
 
 ```javascript
 "preset1"   // windows defined by WindowPresets\preset1.json
@@ -160,6 +169,25 @@ Examples of diferent ways how to specify a file:
  * ***screen*** area on concrete display with given id
 
  * ***window*** area inside given window (within its client area)
+
+
+
+## <*scriptexSpec*>
+
+Specifies a scriban script expression.
+
+```javascript
+"x > 7"        // directly as string expression
+{expr:'x > 7'}
+{preset:'id'} // settings loaded from ScriptexSpec\{id}.json
+{file:{path:'c:/expression/myExpr1.scriban'}}
+```
+
+ * ***preset*** name of the json file in `ScriptexSpec` folder containing the *scriptexSpec* definition
+
+ * ***expr*** expression string
+
+ * ***file*** *fileSpec* of the file to load the expression from
 
 
 
@@ -216,6 +244,10 @@ watchf "{newest:{path:'C:/myLogs/*.log', recursive:true}}" "{id:'log1'}"
 
 Searches a file for given regular expression, either from beginning or just the lines appended since the last query.
 
+Checks if the regex matches any line (optionally if no line matches).
+
+Optionally evaluates a Scriban expression, passing it the groups captured by the regex.
+
 **Arguments**
 
 * ***fileSpec*** what file to search for a regex
@@ -223,18 +255,27 @@ Searches a file for given regular expression, either from beginning or just the 
 * ***options***
 
   ```javascript
-  {NotMatch:false,fromBeginning:false}
+  {NotMatch:false,fromBeginning:false,expr='string.to_int(Groups[1]) < 7'}
   ```
 
     * ***NotMatch*** success only if no line matches the regexps
-    
     * ***FromBeginning*** true=all lines, false=just newly appended lines
+    * ***Expr*** Scriban expression to evaluate if regex match is found; the 
 
 
 
 **Return value**
 
-OK if regex lookup was successful, FAIL otherwise
+If no *Expr* is specified
+
+* OK if regex lookup was successful
+* FAIL otherwise
+
+If *Expr* is specified
+
+* OK if the expression return true
+* FAIL if the expression returns false
+* ERROR if there is an error evaluating the expression
 
 **Remarks**
 
@@ -249,6 +290,9 @@ regexf "{watch:'log1'}" "Dolly.*"
 # check file "IgLig.txt" for regex that is defined in file RegexPresets\myRegEx1.json
 # returns Success if the regex was NOT found
 regexf "IgLog.txt" "{preset:'myRegEx1'}" "{NotMatch:true}"
+
+# returns success if the expression evaluates to true
+regexf "IgLog.txt" "{pattern:'amount (\\d+)\\s*(\\w+)'}" "{expr:'string.to_int(Groups[1]) < 7',fromBeginning:true}
 ```
 
 

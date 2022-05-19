@@ -25,5 +25,7 @@ namespace TestCaser
 
 		/// <summary> error description string if case of command failure </summary>
 		public string Error;
+
+		public string StackTrace; // FIXME: maybe different data type for stack trace
 	}
 }

@@ -17,6 +17,7 @@ namespace TestCaser
 		public static string WatchedFilesFolder = "WatchedFiles";
 		public static string AreaSpecsFolder = "AreaSpecs";
 		public static string RegExSpecsFolder = "RegexSpecs";
+		public static string ScriptexSpecsFolder = "ScriptexSpecs";
 		public static string WindowSpecsFolder = "WindowSpecs";
 		public static string FileSpecsFolder = "FileSpecs";
 		public static string PatternImgFolder = "PatternImages";
@@ -52,14 +53,6 @@ namespace TestCaser
 				// remember phase
 				File.WriteAllText( PhaseFileName, value );
 			}
-		}
-
-		public void AddResult( string statusCode, string cmdCode, params string[] args )
-		{
-			Directory.CreateDirectory( ResultFolder );
-			var fname = $"{ResultFolder}\\{Case}.txt";
-			var line = $"{statusCode}:{Phase}:{cmdCode}:{String.Join(':', args)}\n";
-			File.AppendAllText( fname, line );
 		}
 
 	}

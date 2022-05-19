@@ -63,7 +63,7 @@ namespace TestCaser
 				Phase = ctx.Phase,
 				Operation = cmdCode,
 				Brief = brief,
-				Details = JToken.FromObject( details )
+				Details = Tools.RemoveEmptyChildren( JToken.FromObject( details ) )
 			};
 
 			var line = JsonConvert.SerializeObject(rl, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore })+"\n";

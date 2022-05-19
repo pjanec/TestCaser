@@ -1,0 +1,50 @@
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+
+    th {
+        border: 1px solid #dddddd;
+        color: white;
+        background-color: #2655ff;
+        text-align: left;
+        padding: 8px;
+    }
+
+    td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f1f1f1;
+    }
+
+
+    /* Checkbox Hack */
+
+    input[type=checkbox] {
+       position: absolute;
+       top: -9999px;
+       left: -9999px;
+    }
+    label { 
+      -webkit-appearance: push-button;
+      -moz-appearance: button; 
+      display: inline-block;
+      cursor: pointer;
+    }
+    
+    /* Default State */
+    input[type=checkbox] ~ div {
+       display:none;
+    }
+    
+    /* Toggled State */
+    input[type=checkbox]:checked ~ div {
+       display:block;
+    }

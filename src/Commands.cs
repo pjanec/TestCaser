@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,8 +84,24 @@ namespace TestCaser
 			var cmd = InstantiateCommand( cmdLine[0].ToLower() );
 			if( cmd != null )
 			{
-				cmd.ParseCmd( cmdLine );
-				return cmd.Execute();
+				try
+				{
+					cmd.ParseCmd( cmdLine );
+					return cmd.Execute();
+				}
+				catch( Exception ex )
+				{
+					var br = new BaseResult()
+					{
+						CmdCode = cmd.Code,
+						Brief = string.Join(' ', cmdLine[1..]),
+						Status = EStatus.ERROR,
+						StackTrace = new StackTrace( ex, true ).ToString(),
+						Error = ex.Message
+					};
+					Results.Add( br );
+					return ExitCode.Error;
+				}
 			}
 			return ExitCode.Error;
 		}

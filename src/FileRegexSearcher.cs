@@ -30,7 +30,7 @@ namespace TestCaser
 			_re = re;
 		}
 
-		public bool Search( List<string> lines )
+		public bool Search( List<string> lines, out Match match )
 		{
 			// if at least one line needs to match, return false if one does not
 			// if niether line should match, return false if one does
@@ -41,8 +41,12 @@ namespace TestCaser
 			{
 				var m = _re.Match( line );
 				if( m.Success )
+				{
+					match = m;
 					return retIfMatch;
+				}
 			}
+			match = null;
 			return !retIfMatch;
 		}
 

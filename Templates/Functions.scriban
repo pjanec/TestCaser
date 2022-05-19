@@ -1,0 +1,105 @@
+{{-func htmlize
+  ret $0 | html.escape | string.replace " " "&nbsp;" | string.replace "\r\n" "<br>\n"
+  end-}}
+
+{{-func render_error~}}
+  {{~ d = $0.Details; if d && !string.empty(d.Error) }}
+      {{d.Error | htmlize}}
+      {{~ if !string.empty(d.StackTrace) ~}}
+      <div>
+        <label style="color:blue" for="toggle-1">[Stack Trace]</label>
+        <input type="checkbox" id="toggle-1">
+        <div>{{d.StackTrace | htmlize }}</div>
+      </div>
+      {{~ end ~}}
+  {{~ end ~}} 
+{{~end-}}
+
+{{-func render_default~}}
+<td>
+    {{render_error $0}}
+</td>
+{{~end-}}
+
+{{-func render_findimg~}}
+<td>
+   {{~ d = $0.Details; if d }}
+    <span>
+      {{d.CmdLine}}  
+    </span>
+    {{~ if !(d.ScreenshotPath | string.empty) }}
+    <span>
+      <a href="{{d.ScreenshotPath}}" target="_blank">screenshot</a>
+    </span>
+    {{~ end ~}} 
+    {{~ if !(d.TemplatePath | string.empty) }}
+    <span>
+      <a href="{{d.TemplatePath}}" target="_blank">(template)</a>
+    </span>
+    {{~ end ~}} 
+   {{~ end ~}} 
+   {{ render_error $0 }}
+   </td>
+{{~end-}}
+
+{{-func render_screenshot~}}
+ <td>
+ {{~ d = $0.Details; if d }}
+    <span>
+      {{d.CmdLine}}  
+    </span>
+    {{~ if !(d.Path | string.empty) }}
+    <span>
+      <a href="{{d.Path}}" target="_blank">screenshot</a>
+    </span>
+    {{~ end ~}} 
+  {{~end~}}
+  {{ render_error $0 }}
+  </td>
+{{~end-}}
+
+{{-func render_regexf~}}
+ <td>
+   {{ render_error $0 }}
+   {{~ d = $0.Details; if d }}
+      {{~ if !string.empty(d.Expr) || (d.Match && d.Match.Groups.size > 0) ~}}
+        <label style="color:blue" for="toggle-1">[Detail]</label>
+        <input type="checkbox" id="toggle-1">
+        <div>
+
+          {{~ if !string.empty(d.Expr) ~}}
+          <div>
+            <div style="font-weight: bold">Expression:</div>
+            <div style="margin-left:10px">
+              {{d.Expr | htmlize}}  
+            </div>
+          </div>  
+          <div><br></div>
+          {{~ end ~}}
+
+          {{~ if d.Match && d.Match.Groups.size > 0  }}
+          <div style="font-weight: bold">Groups:</div>
+            <table style="margin-left:10px">
+              {{~ for $g in d.Match.Groups ~}}
+                <tr><td>[{{for.index}}]</td><td>{{$g | htmlize}}</td></tr>
+              {{~ end ~}}
+            </table>
+          </div>  
+          {{~ end ~}} 
+
+        </div>  
+     {{~end~}}
+   {{~end~}}
+  </td>
+{{~end-}}
+
+{{-
+    func render_rec_args
+        if      $0.Operation=="findimg"; render_findimg $0
+        else if $0.Operation=="screenshot"; render_screenshot $0
+        else if $0.Operation=="regexf"; render_regexf $0
+        else;                            render_default $0
+        end
+    end
+-}}
+
