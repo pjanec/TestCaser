@@ -14,8 +14,7 @@ namespace TestCaser
 	public class BaseCmd
 	{
 		/// <summary> command id </summary>
-		[JsonIgnore]		
-		public virtual string Code => throw new NotImplementedException();
+		public virtual string Code => GetType().Name.ToLower();
 
 		public BaseCmd()
 		{

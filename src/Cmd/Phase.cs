@@ -13,8 +13,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Phase : BaseCmd
 	{
-		[JsonIgnore]
-		public override string Code => "phase";
 		public string Name;
 
 		public override void ParseCmd( string[] cmd )

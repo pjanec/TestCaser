@@ -13,9 +13,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Clear : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "clear";
-
 		public override ExitCode Execute()
 		{
 			try

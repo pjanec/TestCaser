@@ -17,9 +17,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Watchf : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "watchf";
-
 		public string FileSpec;
 		public string Id;
 		public bool FromBeginning;

@@ -14,9 +14,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Findimg : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "findimg";
-
 		public string ImgId;
 		public ScreenSearcher.Args Args = new ScreenSearcher.Args();
 

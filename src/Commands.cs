@@ -29,52 +29,54 @@ namespace TestCaser
 
 		public Commands()
 		{
-			Register<Cmd.Clear, BaseResult>();
-			Register<Cmd.Case, BaseResult>();
-			Register<Cmd.Phase, BaseResult>();
-			Register<Cmd.Passed, BaseResult>();
-			Register<Cmd.Report, BaseResult>();
-			Register<Cmd.Watchf, BaseResult>();
-			Register<Cmd.Findimg, Cmd.Findimg.Result>();
-			Register<Cmd.Regexf, Cmd.Regexf.Result>();
-			Register<Cmd.Screenshot, Cmd.Screenshot.Result>();
-			Register<Cmd.Result, Cmd.Result._Result>();
+			//Register<Cmd.Clear>();
+			//Register<Cmd.Case>();
+			//Register<Cmd.Phase>();
+			//Register<Cmd.Passed>();
+			//Register<Cmd.Report>();
+			//Register<Cmd.Watchf>();
+			//Register<Cmd.Findimg>();
+			//Register<Cmd.Regexf>();
+			//Register<Cmd.Screenshot>();
+			//Register<Cmd.Result>();
 		}
 
 		class CmdRecord
 		{
 			public Func<BaseCmd> CommandCreator;
-			public Func<string, BaseResult> ResultDeserializer;
 		}
 
 		static Dictionary<string, CmdRecord> _commands = new Dictionary<string, CmdRecord>();
 
-		public BaseResult DeserializeResult( string cmdCode, string jsonStr )
-		{
-			if( _commands.TryGetValue( cmdCode, out var rec ) )
-			{
-				return rec.ResultDeserializer( jsonStr );
-			}
-			return null;
-		}
-
 		public BaseCmd InstantiateCommand( string cmdCode )
 		{
-			if( _commands.TryGetValue( cmdCode, out var rec ) )
+			// try registered commands first
+			if (_commands.TryGetValue( cmdCode, out var rec ))
 			{
 				return rec.CommandCreator();
 			}
+
+			// try to find the comamnd class via reflection
+			var thisTypeName = this.GetType().FullName;
+			var lastDotIndex = thisTypeName.LastIndexOf('.');
+			var namespc = thisTypeName.Substring( 0, lastDotIndex );
+
+			var typeName = namespc+".Cmd."+cmdCode.Substring(0, 1).ToUpper()+cmdCode.Substring(1).ToLower();
+			var type = Type.GetType( typeName );
+			if( type != null )
+			{
+				return (BaseCmd) Activator.CreateInstance( type );
+			}
+
 			return null;
 		}
 
-		public void Register<TCmd, TResult>()
+		public void Register<TCmd>()
 			where TCmd:BaseCmd, new()
-			where TResult:BaseResult
 		{
 			var cmdCode = new TCmd().Code.ToLower();
 			_commands[cmdCode] = new CmdRecord()
 			{
-				ResultDeserializer = (string json) => JsonConvert.DeserializeObject<TResult>( json ),
 				CommandCreator = () => new TCmd()
 			};
 		}
@@ -102,6 +104,17 @@ namespace TestCaser
 					Results.Add( br );
 					return ExitCode.Error;
 				}
+			}
+			else
+			{
+				var br = new BaseResult()
+				{
+					CmdCode = cmdLine[0],
+					Brief = string.Join(' ', cmdLine[1..]),
+					Status = EStatus.ERROR,
+					Error = "Invalid command",
+				};
+				Results.Add( br );
 			}
 			return ExitCode.Error;
 		}

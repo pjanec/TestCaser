@@ -10,18 +10,19 @@ namespace TestCaser
 	/// </summary>
 	public class BaseResult
 	{
-		[JsonIgnore]
+		public DateTime TimeStamp;
+
+		public string Phase;
+
 		public string CmdCode;
+
+		[JsonConverter(typeof( Newtonsoft.Json.Converters.StringEnumConverter ) )]
+		public EStatus Status;
 
 		/// <summary> brief info about the command arguments, shown in report, helping the user to
 		///  identify what command the results are provided for  </summary>
 		public string Brief;
 
-		//[JsonIgnore]
-		//public DateTime TimeStamp;
-
-		[JsonIgnore]
-		public EStatus Status;
 
 		/// <summary> error description string if case of command failure </summary>
 		public string Error;

@@ -12,9 +12,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Passed : BaseCmd
 	{
-		[JsonIgnore]
-		public override string Code => "passed";
-
 		public override ExitCode Execute()
 		{
 			if( Results.AllPassed() )

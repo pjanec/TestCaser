@@ -24,20 +24,9 @@ namespace TestCaser.Models.Results
 	public class TestCase
 	{
 		public string Name = string.Empty;
-		public List<Record> Records = new List<Record>();
-		public bool Failed => Records.Any( (x) => x.Failed );
+		public List<Dictionary<string,object>> Results = new List<Dictionary<string,object>>();	// from result json
+		public bool Failed => Results.Any( (x) => (string)x["Status"] == EStatus.ERROR.ToString() ||  (string)x["Status"] == EStatus.FAIL.ToString() );
 	}
-
-	public class Record
-	{
-		public string Status = string.Empty;
-		public string Phase = string.Empty;
-		public string Operation = string.Empty;
-		public string Brief = string.Empty;
-		public BaseResult Details; // operation specific
-		public bool Failed => Status == "FAIL" || Status == "ERROR";
-	}
-
 
 	/// <summary>
 	/// Gathers the results of all the test cases from the result files
@@ -63,18 +52,9 @@ namespace TestCaser.Models.Results
 				{
 					try
 					{
-						TestCaser.Results.ParseLine( line, out var rl );
+						var result = JsonConvert.DeserializeObject<Dictionary<string, object>>( line );
 
-						var chk = new Record()
-						{
-							Status = rl.Status.ToString(),
-							Operation = rl.Operation,
-							Phase = rl.Phase,
-							Brief = rl.Brief,
-							Details = Commands.Instance.DeserializeResult( rl.Operation, rl.Details.ToString() )
-						};
-
-						tc.Records.Add( chk );
+						tc.Results.Add( result );
 					}
 					catch
 					{

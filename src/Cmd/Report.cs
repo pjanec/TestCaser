@@ -16,8 +16,6 @@ namespace TestCaser.Cmd
 	{
         static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-		[JsonIgnore]		
-		public override string Code => "report";
 		public string ReportType;
 
 		public override void ParseCmd( string[] cmd )

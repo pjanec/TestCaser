@@ -14,9 +14,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Result : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "result";
-
 		public EStatus Status;
 		public string _Brief;
 		public string Error;

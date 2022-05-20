@@ -15,9 +15,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Regexf : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "regexf";
-
 		public string FileSpec;
 		public string RegexSpec;
 		public bool NotMatch;

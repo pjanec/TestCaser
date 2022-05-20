@@ -14,9 +14,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Screenshot : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "screenshot";
-
 		public string ImgId;
 		public ScreenSearcher.Args Args = new ScreenSearcher.Args();
 

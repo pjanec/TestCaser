@@ -30,7 +30,15 @@ namespace TestCaser
 
 		public static void Add( BaseResult result )
 		{
-			AddLine( result.Status.ToString(), result.CmdCode, result.Brief, result );
+			Directory.CreateDirectory( Context.ResultFolder );
+
+			result.TimeStamp = DateTime.Now;
+			result.Phase = ctx.Phase;
+
+			var line = JsonConvert.SerializeObject(result, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore })+"\n";
+				
+			var fname = GetFileName();
+			File.AppendAllText( fname, line );
 		}
 
 		public static void ClearAll()
@@ -42,41 +50,6 @@ namespace TestCaser
 			}
 		}
 
-		public class ResultLine
-		{
-			public DateTime TimeStamp;
-			public string Status;
-			public string Phase;
-			public string Operation;
-			public string Brief;
-			public JToken Details; // json
-		}
-
-		public static void AddLine( string statusCode, string cmdCode, string brief, BaseResult details )
-		{
-			Directory.CreateDirectory( Context.ResultFolder );
-
-			var rl = new ResultLine()
-			{
-				TimeStamp = DateTime.Now,
-				Status = statusCode,
-				Phase = ctx.Phase,
-				Operation = cmdCode,
-				Brief = brief,
-				Details = Tools.RemoveEmptyChildren( JToken.FromObject( details ) )
-			};
-
-			var line = JsonConvert.SerializeObject(rl, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore })+"\n";
-				
-			var fname = GetFileName();
-			File.AppendAllText( fname, line );
-		}
-
-		public static void ParseLine( string line, out ResultLine rl )
-		{
-			rl = JsonConvert.DeserializeObject<ResultLine>( line );
-		}
-
 		public static bool AllPassed()
 		{
 			// check if there is any failure or error reported in the results
@@ -86,8 +59,8 @@ namespace TestCaser
 				var lines = File.ReadAllLines( fname );
 				foreach( var line in lines )
 				{
-					ParseLine( line, out var rl );
-					if( rl.Status == "ERROR" || rl.Status == "FAIL" )
+					var res = JsonConvert.DeserializeObject<BaseResult>( line );
+					if( res.Status == EStatus.ERROR || res.Status == EStatus.FAIL )
 					{
 						return false;
 					}

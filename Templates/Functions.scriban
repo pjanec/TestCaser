@@ -2,8 +2,8 @@
   ret $0 | html.escape | string.replace " " "&nbsp;" | string.replace "\r\n" "<br>\n"
   end-}}
 
-{{-func render_error~}}
-  {{~ d = $0.Details; if d && !string.empty(d.Error) }}
+{{-func render_error ~}}
+  {{~ d = $0; if d.Error && !string.empty(d.Error) }}
       {{d.Error | htmlize}}
       {{~ if !string.empty(d.StackTrace) ~}}
       <div>
@@ -23,7 +23,7 @@
 
 {{-func render_findimg~}}
 <td>
-   {{~ d = $0.Details; if d }}
+   {{~ d = $0; if d }}
     <span>
       {{d.CmdLine}}  
     </span>
@@ -44,7 +44,7 @@
 
 {{-func render_screenshot~}}
  <td>
- {{~ d = $0.Details; if d }}
+ {{~ d = $0; if d }}
     <span>
       {{d.CmdLine}}  
     </span>
@@ -61,7 +61,7 @@
 {{-func render_regexf~}}
  <td>
    {{ render_error $0 }}
-   {{~ d = $0.Details; if d }}
+   {{~ d = $0; if d }}
       {{~ if !string.empty(d.Expr) || (d.Match && d.Match.Groups.size > 0) ~}}
         <label style="color:blue" for="toggle-1">[Detail]</label>
         <input type="checkbox" id="toggle-1">
@@ -95,9 +95,9 @@
 
 {{-
     func render_rec_args
-        if      $0.Operation=="findimg"; render_findimg $0
-        else if $0.Operation=="screenshot"; render_screenshot $0
-        else if $0.Operation=="regexf"; render_regexf $0
+        if      $0.CmdCode=="findimg"; render_findimg $0
+        else if $0.CmdCode=="screenshot"; render_screenshot $0
+        else if $0.CmdCode=="regexf"; render_regexf $0
         else;                            render_default $0
         end
     end

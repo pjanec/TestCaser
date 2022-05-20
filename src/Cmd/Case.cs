@@ -12,8 +12,6 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Case : BaseCmd
 	{
-		[JsonIgnore]		
-		public override string Code => "case";
 		public string Name;
 
 		public override void ParseCmd( string[] cmd )
