@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser.Cmd
 {
@@ -15,14 +16,14 @@ namespace TestCaser.Cmd
 	public class Screenshot : BaseCmd
 	{
 		public string ImgId;
-		public ScreenSearcher.Args Args = new ScreenSearcher.Args();
+		public JToken Args;
 
 		public override string Brief => ImgId;
 
 		public override void ParseCmd( string[] cmd )
 		{
 			ImgId = cmd[1];
-			if( cmd.Length > 2 && Tools.IsJsonObj( cmd[2] ) ) Args = JsonConvert.DeserializeObject<ScreenSearcher.Args>( cmd[2] );
+			if( cmd.Length > 2 ) Args = Tools.ToJToken( cmd[2] );
 		}
 
 		public class Result : BaseResult
@@ -36,7 +37,8 @@ namespace TestCaser.Cmd
 			var m = new ScreenSearcher( null, ImgId );
 			try
 			{
-				var path = m.SaveImage( Args );
+				var args = Args!=null ? Args.ToObject<ScreenSearcher.Args>() : new ScreenSearcher.Args();
+				var path = m.SaveImage( args );
 				var relPath = Functions.path_getrelative( path, Context.ResultFolder );
 
 				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.OK, Path = relPath });

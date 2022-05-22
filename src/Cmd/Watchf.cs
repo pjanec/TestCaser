@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser.Cmd
 {
@@ -17,13 +18,13 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Watchf : BaseCmd
 	{
-		public string FileSpec;
+		public JToken FileSpec;
 		public string Id;
 		public bool FromBeginning;
 
 		public override void ParseCmd( string[] cmd )
 		{
-			FileSpec = cmd[1];
+			FileSpec = Tools.ToJToken( cmd[1] );
 			if( cmd.Length > 2 && Tools.IsJsonObj( cmd[2] ) ) JsonConvert.PopulateObject( cmd[2], this );
 		}
 

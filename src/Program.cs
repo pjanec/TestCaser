@@ -88,6 +88,7 @@ namespace TestCaser
 			Test( new string[] { "case", "MyTestCase1" } );
 			Test( new string[] { "phase", "Phase1" } );
 			Test( new string[] { "watchf", "{newest:{path:'./*.log', recursive:true}}", "{id:'ig'}" });
+			//Test( new string[] { "watchf", "IgLog.txt", "{id:'ig'}" });
 			//Test( new string[] { "regexf", "{watch:'ig'}", "Dolly.*" } );
 			//Test( new string[] { "regexf", "IgLog2.txt", "{preset:'HelloDolly'}", "{NotMatch:true}" } );
 			Test( new string[] { "regexf", "IgLog.txt", "{pattern:'amount (\\\\d+)\\\\s*(\\\\w+)'}", "{expr:'string.to_int(Groups[1]) < 9',fromBeginning:true}" } );

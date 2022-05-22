@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser.Cmd
 {
@@ -15,14 +16,14 @@ namespace TestCaser.Cmd
 	public class Findimg : BaseCmd
 	{
 		public string ImgId;
-		public ScreenSearcher.Args Args = new ScreenSearcher.Args();
+		public JToken Args;
 
 		public override string Brief => ImgId;
 
 		public override void ParseCmd( string[] cmd )
 		{
 			ImgId = cmd[1];
-			if( cmd.Length > 2 && Tools.IsJsonObj( cmd[2] ) ) Args = JsonConvert.DeserializeObject<ScreenSearcher.Args>( cmd[2] );
+			if( cmd.Length > 2 ) Args = Tools.ToJToken( cmd[2] );
 		}
 
 		public class Result : BaseResult
@@ -37,7 +38,8 @@ namespace TestCaser.Cmd
 			var m = new ScreenSearcher( ImgId );
 			try
 			{
-				if (m.Search( Args, out var grabbedImage ))
+				var args = Args!=null ? Args.ToObject<ScreenSearcher.Args>() : new ScreenSearcher.Args();
+				if (m.Search( args, out var grabbedImage ))
 				{
 					// highlight the area found
 					using (var graphics = Graphics.FromImage( grabbedImage ))
@@ -63,7 +65,7 @@ namespace TestCaser.Cmd
 				}
 
 				// save the image that was grabbed
-				if (!Args.NoSave)
+				if (!args.NoSave)
 				{
 					var templPath = m.TemplateImageFile;
 					var templRelPath = Functions.path_getrelative( templPath, Context.ResultFolder );

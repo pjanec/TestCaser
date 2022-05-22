@@ -15,8 +15,8 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Regexf : BaseCmd
 	{
-		public string FileSpec;
-		public string RegexSpec;
+		public JToken FileSpec;
+		public JToken RegexSpec;
 		public bool NotMatch;
 		public bool FromBeginning;
 		public JToken Expr; // expression to evaluate the status (applied only if regex returns any match)
@@ -48,8 +48,8 @@ namespace TestCaser.Cmd
 
 		public override void ParseCmd( string[] cmd )
 		{
-			FileSpec = cmd[1];
-			RegexSpec = cmd[2];
+			FileSpec = Tools.ToJToken( cmd[1] );
+			RegexSpec = Tools.ToJToken( cmd[2] );
 			if( cmd.Length > 3 && Tools.IsJsonObj( cmd[3] ) ) JsonConvert.PopulateObject( cmd[3], this );
 		}
 

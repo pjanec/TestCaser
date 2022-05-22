@@ -56,6 +56,14 @@ namespace TestCaser
 			return IsJsonObj(str) || IsJsonArr(str);
 		}
 
+		public static JToken ToJToken( string str )
+		{
+			if (IsJson( str )) // parse json
+				return JToken.Parse( str );
+			else // keep as string
+				return new JValue( str );
+		}
+
 		public static string ComputeMd5Hash(string message)
 		{
 			using (var md5 = System.Security.Cryptography.MD5.Create())

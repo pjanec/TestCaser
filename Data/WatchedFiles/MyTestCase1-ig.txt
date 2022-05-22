@@ -1,2 +1,2 @@
-D:\Work\TestCaser\Data\Logs\newest.log
-5
+IgLog.txt
+63
