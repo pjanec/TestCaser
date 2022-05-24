@@ -2,7 +2,11 @@
 <html>
 <style>
    {{~ include "styles.css" ~}}
+   {{~ include "json-pretty.css" ~}}
 </style>
+<script>
+{{~ include "scripts.js" ~}}
+</script>
 <body>
     <h1>Test Results</h1>
     <table>
@@ -31,7 +35,23 @@
         <tr>
             <td></td>
             <td>{{r.Phase}}</td>
+            {{~ if r.CmdData }}
+            <td class="tooltip">{{r.CmdCode}}
+                {{ resUUID = math.uuid }}
+                <span id="{{resUUID}}" class="tooltiptext"></span>
+                <script>
+                  { 
+                    let data = {{r.CmdData | json.dump}};
+                    let options = { indent:4, linkUrls: true, lineNumbers:true };
+                    let html = prettyPrintJson.toHtml(data, options);
+                    let elem = document.getElementById('{{resUUID}}');
+                    elem.innerHTML += html;
+                  }  
+                </script>
+            </td>
+            {{~else~}}
             <td>{{r.CmdCode}}</td>
+            {{~end~}}
             <td>{{r.Brief}}</td>
             {{render_rec_args r}}
             <td

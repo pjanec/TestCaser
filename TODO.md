@@ -1,7 +1,3 @@
-# Stack trace to result details
-If the comand execution ends with an exception, save the stack trace to the result detail
-https://stackoverflow.com/questions/65830407/format-stack-trace-to-manually-return-in-api-response
-https://github.com/atifaziz/StackTraceFormatter
 
 # Evaluating regex match
  - regexf saves the Match object (in scriban-accessible form) its results

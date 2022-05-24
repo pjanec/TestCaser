@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using NLog;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace TestCaser
 {
@@ -287,6 +288,21 @@ namespace TestCaser
 		}
 
 
+		static object json_parse( string str )
+		{
+			return JsonConvert.DeserializeObject<Dictionary<string, object>>( str );
+		}
+
+		static string json_dump( object obj )
+		{
+			return JsonConvert.SerializeObject( obj, Formatting.None, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore } );
+		}
+
+		static string json_prettydump( object obj )
+		{
+			return JsonConvert.SerializeObject( obj, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore } );
+		}
+
 		/// <summary>
 		/// Creates a read-only property in given root script object,
 		/// intended for importing of custom functions that should be accessible
@@ -352,6 +368,12 @@ namespace TestCaser
 				var so = CreateNamespace( parent, "tools" );
 			}
 
+			{
+				var so = CreateNamespace( parent, "json" );
+				so.Import("parse", new Func<string, object>((string jsonStr) => json_parse( jsonStr )));
+				so.Import("dump", new Func<object, string>((object obj) => json_dump(obj)));
+				so.Import("prettydump", new Func<object, string>((object obj) => json_prettydump(obj)));
+			}
 		}
 	}
 }

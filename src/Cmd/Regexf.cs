@@ -77,7 +77,7 @@ namespace TestCaser.Cmd
 				if( !success )
 				{	
 					// log the result
-					Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.FAIL, Error = "No match" });
+					Results.Add( this, new Result() { Status=EStatus.FAIL, Error = "No match" });
 					return ExitCode.Failure;
 				}
 
@@ -95,9 +95,9 @@ namespace TestCaser.Cmd
 					}
 					catch( Exception ex )
 					{
-						Results.Add( new Result()
+						Results.Add( this, new Result()
 						{
-							Brief=Brief, CmdCode=Code, Status=EStatus.ERROR,
+							Status=EStatus.ERROR,
 							Error = ex.Message,
 							Expr = exprStr,
 							Match = model
@@ -109,9 +109,9 @@ namespace TestCaser.Cmd
 					{
 						if( !((bool)result) ) // not passed
 						{
-							Results.Add( new Result()
+							Results.Add( this, new Result()
 							{
-								Brief=Brief, CmdCode=Code, Status=EStatus.FAIL, Error="Expression returned false",
+								Status=EStatus.FAIL, Error="Expression returned false",
 								Expr = exprStr,
 								Match = model
 							});
@@ -119,9 +119,9 @@ namespace TestCaser.Cmd
 						}
 						else
 						{
-							Results.Add( new Result()
+							Results.Add( this, new Result()
 							{
-								Brief=Brief, CmdCode=Code, Status=EStatus.OK,
+								Status=EStatus.OK,
 								Expr = exprStr,
 								Match = model
 							});
@@ -130,19 +130,28 @@ namespace TestCaser.Cmd
 					}
 					else
 					{
-						Results.Add( new Result()
+						Results.Add( this, new Result()
 						{
-							Brief=Brief, CmdCode=Code, Status=EStatus.ERROR, Error="Expression did not return a bool value",
+							Status=EStatus.ERROR, Error="Expression did not return a bool value",
 							Expr = exprStr,
 							Match = model
 						});
 						return ExitCode.Error;
 					}
 				}
+				else
+				{
+					Results.Add( this, new Result()
+					{
+						Status=EStatus.OK,
+						Match = new MatchResultForScriban( match )
+					});
+					return ExitCode.Success;
+				}
 			}
 			catch(Exception ex)
 			{
-				Results.Add( new Result() { Brief=Brief, CmdCode = Code, Status = EStatus.ERROR, Error = ex.Message } );
+				Results.Add( this, new Result() { Status = EStatus.ERROR, Error = ex.Message } );
 
 				return ExitCode.Failure;
 			}

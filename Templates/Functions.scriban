@@ -17,6 +17,7 @@
 
 {{-func render_default~}}
 <td>
+    {{ $0.Details }}
     {{render_error $0}}
 </td>
 {{~end-}}

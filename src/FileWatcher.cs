@@ -22,6 +22,7 @@ namespace TestCaser
 		long _startOffset = 0;
 
 		public string WatchedPath => _watchedFileName;
+		public long StartOffset => _startOffset;
 
 		public enum Mode
 		{

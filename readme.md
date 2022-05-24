@@ -149,7 +149,7 @@ Specifies a rectangular area on the screen, in physical coordinates.
 [1,2,3,4] // area on desktop (physical coordinates) x,y,w,h
 ['10%',20,30,'40%'] // area defined by percents of desktop's width/height
 {rect:[1,2,3,4]} // just another way to specify area coordinates
-{rect:{X:1,Y:2,W:3,H:4]} // one more way of the same as above
+{rect:{X:1,Y:2,Width:3,Height:4]} // one more way of the same as above
 {window:'preset1'}} // window defined by WindowPresets\preset1.json
 {window:{preset:'name1',rect:[1,2,3,4]}} // area with the window
 {window:{title:'pattern'} // window with title matching given regex pattern

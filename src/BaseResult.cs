@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TestCaser
 {
@@ -16,6 +17,8 @@ namespace TestCaser
 
 		public string CmdCode;
 
+		public JToken CmdData;
+
 		[JsonConverter(typeof( Newtonsoft.Json.Converters.StringEnumConverter ) )]
 		public EStatus Status;
 
@@ -28,5 +31,7 @@ namespace TestCaser
 		public string Error;
 
 		public string StackTrace; // FIXME: maybe different data type for stack trace
+
+		public virtual string Details => null; // default text for result report (if no specialized rendering is used)
 	}
 }

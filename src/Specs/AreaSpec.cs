@@ -27,8 +27,8 @@ namespace TestCaser
 		{
 			public JToken X;  // 12, "50%"
 			public JToken Y;
-			public JToken W;
-			public JToken H;  // 640
+			public JToken Width;
+			public JToken Height;  // 640
 		}
 
 		public class ScreenArea
@@ -61,8 +61,8 @@ namespace TestCaser
 				{
 					X = AbsRel( myRect.X, reference.Width ),
 					Y = AbsRel( myRect.Y, reference.Height ),
-					Width = AbsRel( myRect.W, reference.Width ),
-					Height = AbsRel( myRect.H, reference.Height ),
+					Width = AbsRel( myRect.Width, reference.Width ),
+					Height = AbsRel( myRect.Height, reference.Height ),
 				};
 			}
 

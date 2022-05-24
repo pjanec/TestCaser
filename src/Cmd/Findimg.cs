@@ -56,7 +56,7 @@ namespace TestCaser.Cmd
 					var grabbedPath = m.SaveImage( grabbedImage );
 					var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
 
-					Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.OK, 
+					Results.Add( this, new Result() { Status=EStatus.OK, 
 						ScreenshotPath = grabbedRelPath,
 						TemplatePath = templRelPath
 					});
@@ -73,20 +73,22 @@ namespace TestCaser.Cmd
 					var grabbedPath = m.SaveImage( grabbedImage );
 					var grabbedRelPath = Functions.path_getrelative( grabbedPath, Context.ResultFolder );
 
-					Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.FAIL,
+					Results.Add( this, new Result()
+					{
+						Status=EStatus.FAIL,
 						ScreenshotPath = grabbedRelPath,
 						TemplatePath = templRelPath
 					});
 				}
 				else
 				{
-					Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status= EStatus.FAIL });
+					Results.Add( this, new Result() { Status= EStatus.FAIL });
 				}
 				return ExitCode.Failure;
 			}
 			catch (Exception ex)
 			{
-				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.FAIL, Error = ex.Message });
+				Results.Add( this, new Result() { Status=EStatus.FAIL, Error = ex.Message });
 				return ExitCode.Failure;
 			}
 		}

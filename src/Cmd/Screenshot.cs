@@ -41,12 +41,12 @@ namespace TestCaser.Cmd
 				var path = m.SaveImage( args );
 				var relPath = Functions.path_getrelative( path, Context.ResultFolder );
 
-				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.OK, Path = relPath });
+				Results.Add( this, new Result() { Status=EStatus.OK, Path = relPath });
 				return ExitCode.Success;
 			}
 			catch( Exception ex  )
 			{
-				Results.Add( new Result() { Brief=Brief, CmdCode=Code, Status=EStatus.FAIL, Error = ex.Message });
+				Results.Add( this, new Result() { Status=EStatus.FAIL, Error = ex.Message });
 				return ExitCode.Failure;
 			}
 		}

@@ -14,6 +14,7 @@ namespace TestCaser.Cmd
 	/// </summary>
 	public class Result : BaseCmd
 	{
+		[JsonConverter(typeof( Newtonsoft.Json.Converters.StringEnumConverter ) )]
 		public EStatus Status;
 		public string _Brief;
 		public string Error;
@@ -44,7 +45,7 @@ namespace TestCaser.Cmd
 		public override ExitCode Execute()
 		{
 
-			Results.Add( new _Result() { CmdCode=Code, Brief=Brief, Status=Status, Error=Error });
+			Results.Add( this, new _Result() { Status=Status, Error=Error });
 			return ExitCode.Failure;
 		}
 	}

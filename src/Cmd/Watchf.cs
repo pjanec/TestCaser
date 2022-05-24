@@ -30,6 +30,13 @@ namespace TestCaser.Cmd
 
 		public override string Brief => Id;
 
+		public class Result : BaseResult
+		{					
+			public string Path;	// the file path used
+			public long Offset; // offset to start the regex search
+			public override string Details => $"{Path}, offset {Offset}";
+		}
+
 		public override ExitCode Execute()
 		{
 			var fspec = TestCaser.FileSpec.From( FileSpec );
@@ -39,6 +46,14 @@ namespace TestCaser.Cmd
 				wf.MoveToEnd();
 			}
 			wf.Save(); // remember new offset
+
+			Results.Add( this, new Result()
+			{
+				Brief=Brief, CmdCode=Code, CmdData=JsonConvert.SerializeObject(this), Status=EStatus.OK,
+				Path = wf.WatchedPath,
+				Offset =  wf.StartOffset,
+			});
+
 			return ExitCode.Success;
 		}
 	}

@@ -28,6 +28,17 @@ namespace TestCaser
 			return fname;
 		}
 
+		public static void Add( BaseCmd cmd,  BaseResult result )
+		{
+			if( cmd != null )
+			{
+				result.Brief = cmd.Brief;
+				result.CmdCode = cmd.Code;
+				result.CmdData = JToken.FromObject(cmd);
+			}
+			Add( result );
+		}
+
 		public static void Add( BaseResult result )
 		{
 			Directory.CreateDirectory( Context.ResultFolder );
