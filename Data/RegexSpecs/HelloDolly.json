@@ -1,0 +1,5 @@
+﻿{
+  "Preset": "",
+  "Pattern": "Hello\\sDolly.*",
+  "IgnoreCase": true
+}

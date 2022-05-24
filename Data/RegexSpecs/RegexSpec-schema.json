@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "title": "RegexSpec",
+  "required": [
+  ],
+  "properties": {
+    "Preset": {
+      "type": "string",
+      "default": ""
+    },
+    "Pattern": {
+      "type": "string",
+      "default": ""
+    },
+    "IgnoreCase": {
+      "type": "boolean",
+      "default": false
+    },
+  }
+}

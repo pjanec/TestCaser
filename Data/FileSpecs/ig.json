@@ -1,0 +1,9 @@
+﻿{
+  "Preset": "",
+  "Path": "",
+  "Watch": "",
+  "Newest": {
+    "Path": "c:\\logs",
+    "Recursive": true
+  }
+}

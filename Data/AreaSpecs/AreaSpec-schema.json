@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "title": "AreaSpec",
+  "required": [
+  ],
+  "properties": {
+    "Preset": {
+      "type": "string",
+      "default": ""
+    },
+    "Rect": {
+      "type": "object",
+      "required": [
+          "X",
+          "Y",
+          "Width",
+          "Height"
+      ],
+      "properties": {
+        "X": {
+          "type": "number",
+        },
+        "Y": {
+          "type": "number",
+        },
+        "Width": {
+          "type": "number",
+        },
+        "Height": {
+          "type": "number",
+        },
+      }
+    },
+    "Screen": {
+      "type": "object",
+      "required": [
+          "Id",
+      ],
+      "properties": {
+        "Id": {
+          "type": "integer",
+        },
+      }
+    },
+    "Window": {
+      "type": "object",
+      "required": [
+      ],
+      "properties": {
+        "Preset": {
+          "type": "string",
+        },
+        "Title": {
+          "type": "object",
+          "properties": {
+            "Preset": {
+              "type": "string",
+              "default": ""
+            },
+            "Pattern": {
+              "type": "string",
+              "default": ""
+            },
+            "IgnoreCase": {
+              "type": "boolean",
+              "default": false
+            },
+          },
+        },
+      }
+    },
+  }
+}

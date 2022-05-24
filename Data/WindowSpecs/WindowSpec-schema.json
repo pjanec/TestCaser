@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "title": "WindowSpec",
+  "required": [
+  ],
+  "properties": {
+    "Preset": {
+      "type": "string",
+    },
+    "Title": {
+      "type": "object",
+      "properties": {
+        "Preset": {
+          "type": "string",
+          "default": ""
+        },
+        "Pattern": {
+          "type": "string",
+          "default": ""
+        },
+        "IgnoreCase": {
+          "type": "boolean",
+          "default": false
+        },
+      },
+    },
+  },
+}

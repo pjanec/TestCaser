@@ -1,0 +1,11 @@
+﻿{
+  "Preset": "",
+  "Window": {
+    "Preset": "",
+    "Title": {
+      "Preset": "",
+      "Pattern": "IG-1.*",
+      "IgnoreCase": false
+    }
+  }
+}

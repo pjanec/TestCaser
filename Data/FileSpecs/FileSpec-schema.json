@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "title": "FileSpec",
+  "required": [
+  ],
+  "properties": {
+    "Preset": {
+      "type": "string",
+    },
+    "Path": {
+      "type": "string",
+    },
+    "Watch": {
+      "type": "string",
+    },
+    "Newest": {
+      "type": "object",
+      "required": [
+      ],
+      "properties": {
+        "Path": {
+          "type": "string",
+        },
+        "Recursive": {
+          "type": "boolean"
+        },
+      }
+    },
+  }
+}
