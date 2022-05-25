@@ -23,15 +23,15 @@ namespace TestCaser.Cmd
 
 		public override string Brief => $"{FileSpec} {RegexSpec}";
 
-		public class MatchResultForScriban
+		public class ScriptexDataModel
 		{
 			public List<string> Groups = new List<string>();
 
-			public MatchResultForScriban()
+			public ScriptexDataModel()
 			{
 			}
 
-			public MatchResultForScriban( System.Text.RegularExpressions.Match match )
+			public ScriptexDataModel( System.Text.RegularExpressions.Match match )
 			{
 				foreach( var g in match.Groups )
 				{
@@ -43,7 +43,7 @@ namespace TestCaser.Cmd
 		public class Result : BaseResult
 		{					
 			public string Expr;	// the expression evaluated
-			public MatchResultForScriban Match; // the model for that expression
+			public ScriptexDataModel Match; // the model for that expression
 		}
 
 		public override void ParseCmd( string[] cmd )
@@ -86,7 +86,7 @@ namespace TestCaser.Cmd
 				{
 					var exprSpec = ScriptexSpec.From( Expr );
 					var exprStr = exprSpec.GetExpr();
-					var model = new MatchResultForScriban( match );
+					var model = new ScriptexDataModel( match );
 					var evaluator = new ScriptexEvaluator();
 					object result;
 					try
@@ -144,7 +144,7 @@ namespace TestCaser.Cmd
 					Results.Add( this, new Result()
 					{
 						Status=EStatus.OK,
-						Match = new MatchResultForScriban( match )
+						Match = new ScriptexDataModel( match )
 					});
 					return ExitCode.Success;
 				}
@@ -155,8 +155,6 @@ namespace TestCaser.Cmd
 
 				return ExitCode.Failure;
 			}
-
-			return ExitCode.Success;
 		}
 	}
 

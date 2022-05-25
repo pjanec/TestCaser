@@ -28,7 +28,7 @@ namespace TestCaser
 				return re;
 			}
 
-			throw new Exception($"Invalid regex preset");
+			throw new Exception($"Invalid regex spec");
 		}
 
 		public static RegexSpec From( JToken jtok )
@@ -59,10 +59,5 @@ namespace TestCaser
 		}
 	}
 
-	// match info usable for scriban script
-	public class RegexMatch
-	{
-		public string[] Groups;
-	}
 
 }

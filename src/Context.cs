@@ -17,6 +17,8 @@ namespace TestCaser
 		public static string WatchedFilesFolder = "WatchedFiles";
 		public static string AreaSpecsFolder = "AreaSpecs";
 		public static string RegExSpecsFolder = "RegexSpecs";
+		public static string WebreqSpecsFolder = "WebreqSpecs";
+		public static string AddrSpecsFolder = "AddrSpecs";
 		public static string ScriptexSpecsFolder = "ScriptexSpecs";
 		public static string WindowSpecsFolder = "WindowSpecs";
 		public static string FileSpecsFolder = "FileSpecs";

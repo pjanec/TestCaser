@@ -86,7 +86,7 @@ Examples of diferent ways how to specify a file:
 ```
  * ***path*** path to the file
 
- * ***preset*** name of the json file in `FileSpec` folder containing the *fileSpec* definition
+ * ***preset*** name of the json file in `FileSpecs` folder containing the *fileSpec* definition
 
  * ***newest*** takes newest file from given path (may include directory as well as file mask)
 
@@ -131,7 +131,7 @@ Specifies a window on the desktop.
 
 ```
 
- * ***preset*** name of the json file in `WindowSpec` folder containing the *winSpec* definition
+ * ***preset*** name of the json file in `WindowSpecs` folder containing the *winSpec* definition
 
  * ***title*** *regexSpec* used to find the window by its title
 
@@ -160,7 +160,7 @@ Specifies a rectangular area on the screen, in physical coordinates.
 {desktop:{rect:[1,2,3,4]}} // area on desktop
 ```
 
- * ***preset*** name of the json file in `AreaSpec` folder containing the *areaSpec* definition
+ * ***preset*** name of the json file in `AreaSpecs` folder containing the *areaSpec* definition
 
  * ***rect*** x,y,w,h coordinates of the area; if ends with percentage sign, considered relative to width/height
 
@@ -183,13 +183,31 @@ Specifies a scriban script expression.
 {file:{path:'c:/expression/myExpr1.scriban'}}
 ```
 
- * ***preset*** name of the json file in `ScriptexSpec` folder containing the *scriptexSpec* definition
+ * ***preset*** name of the json file in `ScriptexSpecs` folder containing the *scriptexSpec* definition
 
  * ***expr*** expression string
 
  * ***file*** *fileSpec* of the file to load the expression from
 
 
+
+## <*addrSpec*>
+
+Specifies a base url.
+
+```javascript
+"http://www.google.com:80"
+{preset:'preset1'}
+{baseurl:'http://www.google.com:80'}
+
+```
+
+ * ***preset*** name of the json file in `AddrSpecs` folder containing the *addrSpec* definition
+ * ***baseurl*** protocol, server name and port part of the url
+
+
+
+## 
 
 # Presets
 Presets are small JSON files containing detailed specification of the element (file paths, regex patterns, window title, area coordinates...)
@@ -337,7 +355,7 @@ findimg "Images/myButton1.png" "{area:{window:{title:'Slovn'}}}"
 
 ## screenshot <*id*> <*options*>
 
-Takes a screenshot and saves it to given file. Area can be specified, by default whole desktop is taken.
+Takes a screenshot and saves it to the results folder to a file derived from given id. Area can be specified, by default whole desktop is taken.
 
 **Arguments**
 
@@ -379,6 +397,64 @@ Add a custom result record the the report. Useful if the pass/fail status is det
 ```powershell
 result "my Brief" "FAIL" "Something failed."
 ```
+
+
+
+## webreq <*addrSpec*> <*request*> <*options*>
+
+Searches the screen for given image (that was captured from the screen some time before)
+
+**Arguments**
+
+* ***addrSpec*** base url (protocol, server name, port, like "http://my.server.address:80")
+
+* ***request*** request part of the url (like "api/blabla?x=3")
+
+* ***options***
+
+  ```javascript
+  {expr='StatusCode == 200'}
+  {expr='Body | string.size > 500'}
+  {expr='Json.MyValue == "foo"'}
+  ```
+
+    * ***Expr*** Scriban expression to evaluate the response. Inside the expression the following variables are defined
+      * `StatusCode` = integer http status code
+      * `Body` = text string returned in the response
+      * `Json` = json token parsed from the returned body; null if no json returned by the server
+
+**Return value**
+
+If no *Expr* is specified
+
+* OK if http status code 200-299 was returned
+* FAIL otherwise
+
+If *Expr* is specified
+
+* OK if the expression return true
+* FAIL if the expression returns false
+* ERROR if there is an error evaluating the expression
+
+
+
+**Examples:**
+
+```bash
+webreq "www.google.com" "search?q=foo"
+
+#example of GET request
+webreq "https://jsonplaceholder.typicode.com", "todos/1", "{expr:'Json.userId == 1'}"
+
+# example of PUT request
+webreq "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:'hi!'}"
+
+# body can be passed also as JSON object (will be converted to JSON string)
+webreq "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:{num:3,text:'hi!'}}"
+
+```
+
+
 
 
 

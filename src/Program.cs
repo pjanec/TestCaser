@@ -99,6 +99,9 @@ namespace TestCaser
 			Test( new string[] { "result", "myBrief", "FAIL", "Something failed."  } ); // checks if all test cases passed
 			Test( new string[] { "passed" } ); // checks if all test cases passed
 			Test( new string[] { "report", "results" } ); // generates result report
+			//Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "todos/1", "{expr:'Json.userId == 1'}" } );
+			//Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:'hi!'}", "{expr:'Json.userId == 1'}" } );
+			Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:{num:3,txt:'hi!'}}", "{expr:'Json.userId == 1'}" } );
 
 		}
 	}

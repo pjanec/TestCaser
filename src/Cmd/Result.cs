@@ -23,7 +23,6 @@ namespace TestCaser.Cmd
 
 		public class _Result : BaseResult
 		{
-			public RegexMatch Match;
 		}
 
 		public override void ParseCmd( string[] cmd )
