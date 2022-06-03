@@ -24,7 +24,7 @@ namespace TestCaser
 		public static string FileSpecsFolder = "FileSpecs";
 		public static string PatternImgFolder = "PatternImages";
 		public static string OutputImgFolder = ResultFolder+"\\Images";
-		public static string TemplatesFolder = Tools.GetExeDir()+"\\Templates";
+		public static string TemplatesFolder = "Templates";
 
 		public string Case
 		{

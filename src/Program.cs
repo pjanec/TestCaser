@@ -29,8 +29,6 @@ namespace TestCaser
 
 		static int Main( string[] args )
 		{
-			Context.Instance = new Context();
-
 			bool cmdLineError = false;
 			var cmdLineRes = Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(o =>
@@ -60,18 +58,8 @@ namespace TestCaser
 
 		static ExitCode ProcessCmd( string[] cmd, string dataFolder )
 		{
-			string origCwd = Directory.GetCurrentDirectory();
-
-			if( !string.IsNullOrEmpty( dataFolder) )
-			{
-				Directory.SetCurrentDirectory( dataFolder );
-			}
-
-			var exitCode = Commands.Instance.Execute( cmd );
-
-			Directory.SetCurrentDirectory( origCwd );
-
-			return exitCode;
+			var tc = new TC( dataFolder );
+			return tc.Run( cmd );
 		}
 
 		static void Test( string[] cmd )
