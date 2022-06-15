@@ -1,3 +1,6 @@
+# command for archiving log files to result directory for later analysis
+
+
 # Implement sqlq command
  - Executes a SQL query, fetches the records and calls a scriban script to evaluate the final result
  - Allow storing connection strings as ConnStringSpec

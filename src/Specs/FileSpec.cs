@@ -27,7 +27,7 @@ namespace TestCaser
 		{
 			if( !string.IsNullOrEmpty(Path) )
 			{
-				return Path;
+				return Tools.ExpandEnvVars(Path);
 			}
 
 			if( !string.IsNullOrEmpty(Preset) )
@@ -38,7 +38,7 @@ namespace TestCaser
 
 			if( Newest != null )
 			{
-				var files = FindMatchingFileInfos( Newest.Path, Newest.Recursive );
+				var files = FindMatchingFileInfos( Tools.ExpandEnvVars(Newest.Path), Newest.Recursive );
 				var newestFileName = GetNewest( files );
 				return newestFileName;
 			}

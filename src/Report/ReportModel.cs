@@ -41,13 +41,24 @@ namespace TestCaser.Models.Results
 			var m = new ResultsModel();
 
 			// check if there is any failure or error reported in the results
-			var resultFiles = Directory.GetFiles( Context.ResultFolder, "*.txt" );
-			foreach( var fname in resultFiles )
+
+			var dirInfo = new DirectoryInfo(Context.ResultFolder);
+			var enumOpts = new EnumerationOptions()
 			{
-				var tc = new TestCase() { Name = Path.GetFileNameWithoutExtension( fname ) };
+				MatchType = MatchType.Win32,
+				RecurseSubdirectories = false,
+				ReturnSpecialDirectories = false
+			};
+
+			// sort from oldest to youngest
+			var files = dirInfo.GetFiles( "*.txt", enumOpts).OrderBy(x => x.CreationTime);
+
+			foreach( var f in files )
+			{
+				var tc = new TestCase() { Name = Path.GetFileNameWithoutExtension( f.Name ) };
 				m.TestCases.Add( tc );
 
-				var lines = File.ReadAllLines( fname );
+				var lines = File.ReadAllLines( f.FullName );
 				foreach( var line in lines )
 				{
 					try

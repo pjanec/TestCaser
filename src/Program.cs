@@ -89,7 +89,9 @@ namespace TestCaser
 			Test( new string[] { "report", "results" } ); // generates result report
 			//Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "todos/1", "{expr:'Json.userId == 1'}" } );
 			//Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:'hi!'}", "{expr:'Json.userId == 1'}" } );
-			Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:{num:3,txt:'hi!'}}", "{expr:'Json.userId == 1'}" } );
+			//Test( new string[] { "webreq", "https://jsonplaceholder.typicode.com", "{url:'todos/1',method:'put',body:{num:3,txt:'hi!'}}", "{expr:'Json.userId == 1'}" } );
+			Test( new string[] { "webreq", "http://localhost:8541", "api/mr/1/scn/1/grp/1/results", "{expr:'Json.Totals.EnemiesHits == 1'}" });
+
 
 		}
 	}

@@ -21,7 +21,7 @@ namespace TestCaser.Cmd
 		public bool FromBeginning;
 		public JToken Expr; // expression to evaluate the status (applied only if regex returns any match)
 
-		public override string Brief => $"{FileSpec} {RegexSpec}";
+		public override string Brief => $"{FileSpec} {RegexSpec}  {Expr}";
 
 		public class ScriptexDataModel
 		{

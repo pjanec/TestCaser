@@ -14,11 +14,13 @@ namespace TestCaser
 		public JToken Body; // used for put and post methods
 
 
-		public string GetMethod() => Get().Method;
-		public string GetUrl() => Get().Url;
+		public string GetMethod() => Get().Method != null ? Get().Method : string.Empty;
+		public string GetUrl() => Get().Url != null ? Get().Url : string.Empty;
 		public string GetBody()
 		{
 			var body = Get().Body;
+			if( body == null )
+				return string.Empty;
 			if( body.Type == JTokenType.String )
 				return (string) (body as JValue).Value;
 			if( body.Type == JTokenType.Object )

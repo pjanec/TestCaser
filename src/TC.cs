@@ -23,6 +23,7 @@ namespace TestCaser
 
 		public ExitCode Run( params string[] args )
 		{
+			//Console.WriteLine("DEBUG: "+ string.Join(", ", args));
 			string origCwd = Directory.GetCurrentDirectory();
 
 			if( !string.IsNullOrEmpty( _dataFolder) )

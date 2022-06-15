@@ -17,7 +17,19 @@ namespace TestCaser.Cmd
 		{
 			try
 			{
+				// deletes the contents of the Results folder
 				Results.ClearAll();
+
+				// deletes the contents of the Current Status
+				if( System.IO.Directory.Exists( Context.CurrentStatusFolder ) )
+				{
+					Tools.RecursiveDelete( new System.IO.DirectoryInfo( Context.CurrentStatusFolder ), deleteJustContent:true );
+				}
+				else
+				{
+					System.IO.Directory.CreateDirectory( Context.CurrentStatusFolder );
+				}
+
 				return ExitCode.Success;
 			}
 			catch

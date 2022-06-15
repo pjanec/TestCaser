@@ -59,7 +59,7 @@ namespace TestCaser
 
 		static string GetWatchFileRecName( string fileId )
 		{
-			return $"{Context.WatchedFilesFolder}\\{Context.Instance.Case}-{fileId}.txt";
+			return $"{Context.WatchedFilesFolder}\\{fileId}.txt";
 		}
 
 		public void MoveToEnd()

@@ -123,5 +123,45 @@ namespace TestCaser
 		{
 			return (token.Type == JTokenType.Null);
 		}
+
+		/// <summary>
+		/// Replaces %ENVVAR% in a string with actual value of evn vars; undefined ones will be replaced with empty string
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static string ExpandEnvVars( String str, bool leaveUnknown = false )
+		{
+
+			System.Text.RegularExpressions.Match match = System.Text.RegularExpressions.Regex.Match( str, @"(%\w+%)" );
+
+			while( match.Success )
+			{
+				string varName = match.Value.Replace( "%", "" ).Trim();
+				string varValue = Environment.GetEnvironmentVariable( varName );
+
+				bool replace = true;
+
+				if( varValue == null )
+				{
+					if( leaveUnknown )	// do not replace, leave as is
+					{
+						replace = false;
+					}
+					else // replace the unknown var with empty string
+					{
+						varValue = String.Empty;
+					}
+				}
+
+				if( replace )
+				{
+					str = str.Replace( match.Value, varValue );
+				}
+				match = match.NextMatch();
+			}
+			return str;
+		}
+
+
 	}
 }

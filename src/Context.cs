@@ -11,17 +11,18 @@ namespace TestCaser
 	{
 		public static Context Instance;
 
-		public static string CaseFileName = "case.txt";
-		public static string PhaseFileName = "phase.txt";
 		public static string ResultFolder = "Results";
-		public static string WatchedFilesFolder = "WatchedFiles";
-		public static string AreaSpecsFolder = "AreaSpecs";
-		public static string RegExSpecsFolder = "RegexSpecs";
-		public static string WebreqSpecsFolder = "WebreqSpecs";
-		public static string AddrSpecsFolder = "AddrSpecs";
-		public static string ScriptexSpecsFolder = "ScriptexSpecs";
-		public static string WindowSpecsFolder = "WindowSpecs";
-		public static string FileSpecsFolder = "FileSpecs";
+		public static string CurrentStatusFolder = "Status";
+		public static string CaseFileName = CurrentStatusFolder+"\\case.txt";
+		public static string PhaseFileName = CurrentStatusFolder+"\\phase.txt";
+		public static string WatchedFilesFolder = CurrentStatusFolder+"\\WatchedFiles";
+		public static string AreaSpecsFolder = "Specs\\Area";
+		public static string RegExSpecsFolder = "Specs\\Regex";
+		public static string WebreqSpecsFolder = "Specs\\Webreq";
+		public static string AddrSpecsFolder = "Specs\\Addr";
+		public static string ScriptexSpecsFolder = "Specs\\Scriptex";
+		public static string WindowSpecsFolder = "Specs\\Window";
+		public static string FileSpecsFolder = "Specs\\File";
 		public static string PatternImgFolder = "PatternImages";
 		public static string OutputImgFolder = ResultFolder+"\\Images";
 		public static string TemplatesFolder = "Templates";
@@ -35,6 +36,8 @@ namespace TestCaser
 			}
 			set
 			{
+				System.IO.Directory.CreateDirectory( CurrentStatusFolder );
+
 				// remember case
 				File.WriteAllText( CaseFileName, value );
 			

@@ -21,7 +21,7 @@ namespace TestCaser.Cmd
 		public JToken Request;
 		public JToken Expr; // expression to evaluate the status (applied only if regex returns any match)
 
-		public override string Brief => Addr+"; "+Request;
+		public override string Brief => $"{Addr}/{Request}; {Expr}";
 
 		public override void ParseCmd( string[] cmd )
 		{
